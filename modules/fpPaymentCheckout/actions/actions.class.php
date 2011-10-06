@@ -42,7 +42,7 @@ class fpPaymentCheckoutActions extends sfActions
       
     if (sfRequest::POST == $request->getMethod()) {
       $this->form->bind($request->getParameter($this->form->getName()));
-      $this->redirectIf($this->form->isValid(), '@fpPaymentPlugin_info?method=' . $this->form->getValue('payment_method'));
+      $this->redirectIf($this->form->isValid(), '@fpPaymentPlugin_info?method=' . $this->form->getValue('method'));
     }
   }
   

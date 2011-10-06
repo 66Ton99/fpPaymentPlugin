@@ -7,15 +7,15 @@ fpPaymentPlugin_checkout_payment_methods:
 #  param: { module: fpPaymentCheckout, action: order }
   
 fpPaymentPlugin_info:
-  url:   /checkout/info/:type
+  url:   /checkout/info/:method
   param: { module: fpPaymentCheckout, action: info }
   
 fpPaymentPlugin_error:
-  url:   /checkout/error/:type
+  url:   /checkout/error/:method
   param: { module: fpPaymentCheckout, action: error }
 
 fpPaymentPlugin_success:
-  url:   /checkout/success/:type
+  url:   /checkout/success/:method
   param: { module: fpPaymentCheckout, action: success }
   
 fpPaymentPlugin_cart:
