@@ -28,21 +28,21 @@ class fpPaymentCheckoutActions extends sfActions
     }
     if (1 == count($paymentMethods)) {
       $paymentMethod = array_pop($paymentMethods);
-      $this->redirect('@fpPaymentPlugin_info?type=' . $paymentMethod);
+      $this->redirect('@fpPaymentPlugin_info?method=' . $paymentMethod);
     }
     
     $formClass = sfConfig::get('fp_payment_class_form_payment_method', 'fpPaymentMethodPluginForm');
     $this->form = new $formClass();
     $this->form
-      ->getWidget('payment_method')
+      ->getWidget('method')
       ->addOption('choices', $paymentMethods);
     $this->form
-      ->getValidator('payment_method')
+      ->getValidator('method')
       ->addOption('choices', array_keys($paymentMethods));
       
     if (sfRequest::POST == $request->getMethod()) {
       $this->form->bind($request->getParameter($this->form->getName()));
-      $this->redirectIf($this->form->isValid(), '@fpPaymentPlugin_info?type=' . $this->form->getValue('payment_method'));
+      $this->redirectIf($this->form->isValid(), '@fpPaymentPlugin_info?method=' . $this->form->getValue('payment_method'));
     }
   }
   
@@ -58,7 +58,7 @@ class fpPaymentCheckoutActions extends sfActions
     if (fpPaymentContext::getInstance()->getCart()->isEmpty()) {
       return $this->redirect('@fpPaymentPlugin_cart');
     }
-    $method = 'get' . $request->getParameter('type');
+    $method = 'get' . $request->getParameter('method');
     fpPaymentContext::getInstance()->$method()->renderInfoPage($this, $request);
   }
   
