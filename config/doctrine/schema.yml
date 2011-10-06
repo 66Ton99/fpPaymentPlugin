@@ -1,3 +1,4 @@
+<?php $classes = sfConfig::get('fp_payment_object_classes_names', array()) ?> 
 fpPaymentOrder:
   actAs:
     Timestampable: ~
@@ -17,9 +18,11 @@ fpPaymentOrderItem:
     Timestampable: ~
   columns:
     oreder_id: {type: integer, notnull: true}
-    object_id: {type: integer, unsigned: true}
-    object_class_name: {type: varchar(255)}
-    quantity: {type: integer, unsigned: true, notnull: tru}
+    object_id: {type: integer}
+<?php if (1 < count($classes)) { ?> 
+    object_class_name: {type: string(255)}
+<?php } ?> 
+    quantity: {type: integer, notnull: tru}
     name: {type: varchar(255)}
     price: {type: decimal(10), scale: 2, notnull: true}
   relations:
@@ -27,3 +30,9 @@ fpPaymentOrderItem:
       class: fpPaymentOrder
       local: oreder_id
       onDelete: CASCADE
+<?php if (1 == count($classes)) { ?> 
+    Product:
+      class: <?php echo sfInflector::camelize(array_pop($classes)) ?> 
+      local: object_id
+      onDelete: CASCADE
+<?php } ?> 

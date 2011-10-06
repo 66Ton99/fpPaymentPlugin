@@ -6,4 +6,5 @@ all:
     function: 'sfContext::getInstance'
     parameters: []
     subFunctions: ['getUser', 'getGuardUser']
+  object_classes_names: [<?php echo implode(', ', sfConfig::get('fp_payment_cart_object_classes_names', array())) ?>]
  
