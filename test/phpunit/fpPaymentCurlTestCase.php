@@ -31,14 +31,6 @@ class fpPaymentCurlTestCase extends sfBasePhpunitTestCase
   }
 
   /**
-   * Constructs the test case.
-   */
-  public function __construct()
-  {
-    $this->fpPaymentCurl = new fpPaymentCurl();
-  }
-
-  /**
    * Tests fpPaymentCurl->readHeader()
    */
   public function testReadHeader()
