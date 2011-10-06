@@ -1,3 +1,0 @@
-default:
-  require_ssl: true
-  is_secure: false

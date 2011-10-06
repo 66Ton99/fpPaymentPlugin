@@ -1,9 +1,0 @@
-all:
-  login_strict_mode: <?php echo sfConfig::get('fp_payment_cart_login_strict_mode', true) . "\n" ?>
-  class_form_payment_method: 'fpPaymentMethodPluginForm'
-  callback_cart_item_holder: 'fpPaymentCartContext::getInstance'
-  callback_user:
-    function: 'sfContext::getInstance'
-    parameters: []
-    subFunctions: ['getUser', 'getGuardUser']
- 

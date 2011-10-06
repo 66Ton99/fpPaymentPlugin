@@ -1,5 +1,0 @@
-<?php echo $form->renderFormTag(url_for('@fpPaymentPlugin_checkout_payment_methods')) ?>
-  <?php echo $form ?>
-  <hr />
-  <input type="submit" value="Next" />
-</form>
