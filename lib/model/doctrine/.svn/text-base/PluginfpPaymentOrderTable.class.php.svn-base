@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * PluginfpPaymentOrderTable
+ *  
+ * @package    fpPayment
+ * @author     Ton Sharp <Forma-PRO@66ton99.org.ua>
+ */
+abstract class PluginfpPaymentOrderTable extends Doctrine_Table
+{
+  
+  /**
+   * Model name
+   *
+   * @var string
+   */
+  const MODEL_NAME = 'fpPaymentOrder';
+
+  /**
+   * Return singleton
+   *
+   * @return fpPaymentOrderTable
+   */
+  public static function getInstance() {
+    return Doctrine_Core::getTable(static::MODEL_NAME);
+  }
+  
+  /**
+   * doBeforProcess
+   *
+   * @param sfEvent $event
+   *
+   * @return void
+   */
+  public function beforProcess(sfEvent $event)
+  {
+    $class = self::MODEL_NAME;
+    $user = fpPaymentContext::getInstance()->getUser();
+    if (($order = $event['context']->getOrderModel()) &&
+        is_object($order) &&
+        $class::STATUTS_NEW < $order->getStatus())
+    {
+      $order = null;
+    }
+    if (empty($order)) {
+      $order = new $class();
+      $order->setUserId($user->getId());
+      $order->setStatus($class::STATUTS_NEW);
+      $order->save();
+    }
+    $event['context']->setOrderModel($order);
+    
+    $event['context']->getDispatcher()->notify(new sfEvent($this, 'fp_payment_order.after_create', array(
+      'user' => $user,
+      'values' => $event['values'],
+      'context' => $event['context'],
+    )));
+  }
+  
+}

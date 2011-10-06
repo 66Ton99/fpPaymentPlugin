@@ -1,0 +1,29 @@
+fpPaymentOrder:
+  actAs:
+    Timestampable: ~
+  columns:
+    customer_id: {type: integer, notnull: true}
+    status: {type: enum, values: [<?php echo implode(', ', fpPaymentOrder::getStatusEnums()) ?>] }
+    type: {type: varchar(255)}
+    currency: {type: varchar(6), notnull: true}
+  relations:
+    Customer:
+      class: sfGuardUser
+      local:    customer_id
+      onDelete: CASCADE
+
+fpPaymentOrderItem:
+  actAs:
+    Timestampable: ~
+  columns:
+    oreder_id: {type: integer, notnull: true}
+    object_id: {type: integer, unsigned: true}
+    object_class_name: {type: varchar(255)}
+    quantity: {type: integer, unsigned: true, notnull: tru}
+    name: {type: varchar(255)}
+    price: {type: decimal(10), scale: 2, notnull: true}
+  relations:
+    Order:
+      class: fpPaymentOrder
+      local: oreder_id
+      onDelete: CASCADE

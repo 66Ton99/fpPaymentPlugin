@@ -1,0 +1,53 @@
+fpPaymentOrder:
+  actAs:
+    Timestampable: ~
+  columns:
+    user_id:
+      type:    bigint(20)
+      notnull: true
+    status:
+      type:   enum
+      length: 20
+      values:
+        - new
+        - in_process
+        - success
+        - cancelled
+        - fail
+    type:
+      type:     varchar(255)
+  relations:
+    sfGuardUser:
+      local:    user_id
+      foreign:  id
+      onDelete: cascade
+
+fpPaymentOrderItem:
+  actAs:
+    Timestampable: ~
+  columns:
+    oreder_id:
+      type: integer
+      notnull: true
+    object_id:
+      type: integer
+      unsigned: true
+    object_class_name:
+      type: string
+      length: 20
+    quantity:
+      type: integer
+      unsigned: true
+    name:
+      type: string
+      length: 255
+    price:
+      type: float
+  relations:
+    fpPaymentOrder:
+      local: oreder_id
+      foreign:  id
+      onDelete: cascade
+    fpPaymentCurrency:
+      local: currency_id
+      foreign:  id

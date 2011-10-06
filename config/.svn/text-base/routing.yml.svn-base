@@ -1,0 +1,23 @@
+fpPaymentPlugin_checkout_payment_methods:
+  url:   /checkout
+  param: { module: fpPaymentCheckout, action: index }
+
+#fpPaymentPlugin_order:
+#  url:   /checkout/order
+#  param: { module: fpPaymentCheckout, action: order }
+  
+fpPaymentPlugin_info:
+  url:   /checkout/info/:type
+  param: { module: fpPaymentCheckout, action: info }
+  
+fpPaymentPlugin_error:
+  url:   /checkout/error/:type
+  param: { module: fpPaymentCheckout, action: error }
+
+fpPaymentPlugin_success:
+  url:   /checkout/success/:type
+  param: { module: fpPaymentCheckout, action: success }
+  
+fpPaymentPlugin_cart:
+  url:   /cart
+  param: { module: fpPaymentCart, action: index }
