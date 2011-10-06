@@ -1,14 +1,13 @@
 # fpPaymentPlugin
 
-It depends on sfDoctrineGuardPlugin
+It depends on sfDoctrineGuardPlugin but connection does not hardcoded 
 
 sfSslRequirementPlugin - recommended plugin for ssl support
 
-
-You have to enable "fpPaymentCheckout" module in the settings.yml
-{{{
-all:
-  .settings:
-    enabled_modules:
-      - fpPaymentCheckout
-}}}
+You have to enable "fpPaymentCheckout" module
+ 
+_settings.yml_
+    all:
+      .settings:
+        enabled_modules:
+          - fpPaymentCheckout
