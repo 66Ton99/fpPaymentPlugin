@@ -3,8 +3,9 @@
 /**
  * fpPayment abstract Context class for payment modules
  *
- * @package  fpPayment
- * @author 	 Ton Sharp <Forma-PRO@66ton99.org.ua>
+ * @package    fpPayment
+ * @subpackage Base
+ * @author     Ton Sharp <Forma-PRO@66ton99.org.ua>
  */
 abstract class fpPaymentMethodContext
 {

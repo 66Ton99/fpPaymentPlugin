@@ -4,8 +4,8 @@
  * PluginfpPaymentOrder
  * 
  * @package    fpPayment
+ * @subpackage Base
  * @author     Ton Sharp <Forma-PRO@66ton99.org.ua>
- * @version    SVN: $Id: Builder.php 7490 2010-03-29 19:53:27Z jwage $
  */
 abstract class PluginfpPaymentOrder extends BasefpPaymentOrder
 {

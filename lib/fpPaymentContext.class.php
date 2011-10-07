@@ -6,8 +6,9 @@
  * @method fpPaymentAuthorizeContext getAuthorize()
  * @method fpPaymentPayPalContext getPayPal()
  *
- * @package fpPayment
- * @author Ton Sharp <Forma-PRO@66ton99.org.ua>
+ * @package    fpPayment
+ * @subpackage Base
+ * @author     Ton Sharp <Forma-PRO@66ton99.org.ua>
  */
 class fpPaymentContext
 {

@@ -3,10 +3,9 @@
 /**
  * PluginfpPaymentOrderItem form.
  *
- * @package    ##PROJECT_NAME##
- * @subpackage filter
- * @author     ##AUTHOR_NAME##
- * @version    SVN: $Id: sfDoctrineFormFilterPluginTemplate.php 23810 2009-11-12 11:07:44Z Kris.Wallsmith $
+ * @package    fpPayment
+ * @subpackage Base
+ * @author     Ton Sharp <Forma-PRO@66ton99.org.ua>
  */
 abstract class PluginfpPaymentOrderItemFormFilter extends BasefpPaymentOrderItemFormFilter
 {
