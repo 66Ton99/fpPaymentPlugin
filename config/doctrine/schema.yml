@@ -4,7 +4,7 @@ fpPaymentOrder:
     Timestampable: ~
   columns:
     customer_id: {type: integer, notnull: true}
-    status: {type: enum, values: [<?php echo implode(', ', fpPaymentOrder::getStatusEnums()) ?>] }
+    status: {type: enum, values: [<?php echo fpPaymentOrderStatusEnum::implode() ?>] }
     type: {type: varchar(255)}
     currency: {type: varchar(6), notnull: true}
   relations:
