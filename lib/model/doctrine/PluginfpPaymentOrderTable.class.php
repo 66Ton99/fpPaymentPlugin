@@ -35,20 +35,26 @@ abstract class PluginfpPaymentOrderTable extends Doctrine_Table
    */
   public function createOrder(sfEvent $event)
   {
-    $class = self::MODEL_NAME;
     /* @var $context fpPaymentContext */
     $context = $event['context'];
+    
+    $context->getDispatcher()->notify(new sfEvent($this, 'fp_payment_order.befor_create', array(
+      'context' => $context,
+      'values' => $event['values']
+    )));
+    
     $user = $context->getUser();
     if (($order = $context->getOrderModel()) &&
         is_object($order) &&
-        $class::STATUTS_NEW != $order->getStatus())
+        fpPaymentOrderStatusEnum::NEWONE != $order->getStatus())
     {
       $order = null;
     }
     if (empty($order)) {
+      $class = static::MODEL_NAME;
       $order = new $class();
       $order->setCustomerId($user->getId())
-        ->setStatus($class::STATUTS_NEW)
+        ->setStatus(fpPaymentOrderStatusEnum::NEWONE)
         ->setCurrency($context->getCart()->getCurrency())
         ->save();
     }
