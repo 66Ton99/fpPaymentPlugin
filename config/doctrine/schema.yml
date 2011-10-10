@@ -1,10 +1,9 @@
-<?php $classes = sfConfig::get('fp_payment_object_classes_names', array()) ?> 
 fpPaymentOrder:
   actAs:
     Timestampable: ~
   columns:
     customer_id: {type: integer, notnull: true}
-    status: {type: enum, values: [<?php echo implode(', ', fpPaymentOrder::getStatusEnums()) ?>] }
+    status: {type: enum, values: [<?php echo fpPaymentOrderStatusEnum::implode() ?>] }
     type: {type: varchar(255)}
     currency: {type: varchar(6), notnull: true}
   relations:
@@ -19,9 +18,6 @@ fpPaymentOrderItem:
   columns:
     oreder_id: {type: integer, notnull: true}
     object_id: {type: integer}
-<?php if (1 < count($classes)) { ?> 
-    object_class_name: {type: string(255)}
-<?php } ?> 
     quantity: {type: integer, notnull: tru}
     name: {type: varchar(255)}
     price: {type: decimal(10), scale: 2, notnull: true}
@@ -30,9 +26,7 @@ fpPaymentOrderItem:
       class: fpPaymentOrder
       local: oreder_id
       onDelete: CASCADE
-<?php if (1 == count($classes)) { ?> 
     Product:
-      class: <?php echo sfInflector::camelize(array_pop($classes)) ?> 
+      class: <?php sfConfig::get('fp_payment_object_classes_names', 'product') ?>
       local: object_id
       onDelete: CASCADE
-<?php } ?> 
