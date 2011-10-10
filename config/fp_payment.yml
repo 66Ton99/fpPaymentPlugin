@@ -1,4 +1,5 @@
 all:
+  payment_context_prefix: 'fpPayment'
   login_strict_mode: <?php echo sfConfig::get('fp_payment_cart_login_strict_mode', true) . "\n" ?>
   class_form_payment_method: 'fpPaymentMethodPluginForm'
   callback_cart_item_holder: 'fpPaymentCartContext::getInstance'

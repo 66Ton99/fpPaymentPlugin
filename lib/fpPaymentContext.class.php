@@ -126,7 +126,7 @@ class fpPaymentContext
                                     print_r($this->paymentMethods, true)));
     }
     if (!isset($this->paymentMethodsInstances[$method])) {
-      $class = 'fpPayment' . $method . 'Context';
+      $class = sfConfig::get('fp_payment_payment_context_prefix', 'fpPayment') . $method . 'Context';
       $this->paymentMethodsInstances[$method] = new $class();
     }
     return $this->paymentMethodsInstances[$method];
