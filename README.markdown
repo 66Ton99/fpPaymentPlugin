@@ -1,8 +1,20 @@
 # fpPaymentPlugin
 
-It depends on sfDoctrineGuardPlugin but connection does not hardcoded 
+## Overview
 
-sfSslRequirementPlugin - recommended plugin for ssl support
+The basic functional of e commerce: order, product
+
+## Requirements
+
+* [Symfony](http://www.symfony-project.org) 1.4
+* sfDoctrineGuardPlugin - connection does not hardcoded 
+* sfSslRequirementPlugin - recommended plugin for ssl support (optional)
+* fpPaymentTaxPlugin - (optional)
+* fpPaymentCartPlugin - (optional)
+* fpPaymentAuthorizePlugin - (optional)
+* fpPaymentPayPalPlugin - (optional)
+
+## Getting Started
 
 You have to enable "fpPaymentCheckout" module
  
@@ -13,7 +25,19 @@ _settings.yml_
         enabled_modules:
           - fpPaymentCheckout
     
-_Events_
+"product" table must have fpPaymentProduct behaviour
+
+_schema.yml_
+
+    Product:
+      actAs:
+        fpPaymentProduct: ~
+      columns:
+        some_other_field: {type: integer, notnull: true}
+        
+## Features
+
+### Events
 
     fp_payment.befor_process
     @var $context fpPaymentContext
@@ -36,13 +60,3 @@ _Events_
     
     fp_payment.after_process_error OR fp_payment.after_process_success
     @var $context fpPaymentContext
-    
-"product" table must have fpPaymentProduct behaviour
-
-_schema.yml_
-
-    Product:
-      actAs:
-        fpPaymentProduct: ~
-      columns:
-        some_other_field: {type: integer, notnull: true}
