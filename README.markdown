@@ -37,3 +37,12 @@ _Events_
     fp_payment.after_process_error OR fp_payment.after_process_success
     @var $context fpPaymentContext
     
+"product" table must have fpPaymentProduct behaviour
+
+_schema.yml_
+
+    Product:
+      actAs:
+        fpPaymentProduct: ~
+      columns:
+        some_other_field: {type: integer, notnull: true}
