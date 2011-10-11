@@ -2,7 +2,7 @@
 
 ## Overview
 
-The basic functional of e commerce: order, product
+The basic functional of e-commerce: order, product
 
 ## Requirements
 

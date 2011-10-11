@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Doctrine extension fpPaymentCartable
+ * Doctrine extension fpPaymentProduct
  *
  * @package    fpPayment
  * @subpackage Base
