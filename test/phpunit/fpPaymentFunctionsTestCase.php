@@ -29,8 +29,8 @@ class fpPaymentFunctionsTestCase extends sfBasePhpunitTestCase
   public function getObjFromConfig_class()
   {
     $stub = $this->getMockClass('Exception');
-    sfConfig::set('fp_payment_callback_user', $stub);
-    $this->assertInstanceOf($stub, fpPaymentFunctions::getObjFromConfig('fp_payment_callback_user'));
+    sfConfig::set('fp_payment_customer_callback', $stub);
+    $this->assertInstanceOf($stub, fpPaymentFunctions::getObjFromConfig('fp_payment_customer_callback'));
   }
   
 	/**
@@ -44,8 +44,8 @@ class fpPaymentFunctionsTestCase extends sfBasePhpunitTestCase
   			return {$time};
   		}
   	}");
-    sfConfig::set('fp_payment_callback_user', 'SomeTestClassWithStaticMethod::someMethod');
-    $this->assertEquals($time, fpPaymentFunctions::getObjFromConfig('fp_payment_callback_user'));
+    sfConfig::set('fp_payment_customer_callback', 'SomeTestClassWithStaticMethod::someMethod');
+    $this->assertEquals($time, fpPaymentFunctions::getObjFromConfig('fp_payment_customer_callback'));
   }
   
 	/**
@@ -58,8 +58,8 @@ class fpPaymentFunctionsTestCase extends sfBasePhpunitTestCase
     $stub->expects($this->once())
      ->method('someMethod')
      ->will($this->returnValue($time));
-    sfConfig::set('fp_payment_callback_user', array($stub, 'someMethod'));
-    $this->assertEquals($time, fpPaymentFunctions::getObjFromConfig('fp_payment_callback_user'));
+    sfConfig::set('fp_payment_customer_callback', array($stub, 'someMethod'));
+    $this->assertEquals($time, fpPaymentFunctions::getObjFromConfig('fp_payment_customer_callback'));
   }
   
 	/**
@@ -79,10 +79,10 @@ class fpPaymentFunctionsTestCase extends sfBasePhpunitTestCase
   		}
   	}');
     
-    sfConfig::set('fp_payment_callback_user',
+    sfConfig::set('fp_payment_customer_callback',
                   array('function' => 'SomeTestClassWithStaticMethod2::someMethod',
                         'parameters' => array($stub),
                         'subFunctions' => array('someMethod')));
-    $this->assertEquals($time, fpPaymentFunctions::getObjFromConfig('fp_payment_callback_user'));
+    $this->assertEquals($time, fpPaymentFunctions::getObjFromConfig('fp_payment_customer_callback'));
   }
 }

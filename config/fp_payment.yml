@@ -1,13 +1,14 @@
 all:
   payments_context_prefix: 'fpPayment'
   login_strict_mode: <?php echo sfConfig::get('fp_payment_cart_login_strict_mode', true) . "\n" ?> 
-  class_form_payment_method: 'fpPaymentMethodPluginForm'
-  callback_cart_item_holder: 'fpPaymentCartContext::getInstance'
-  callback_user:
+  payment_method_class_form: 'fpPaymentMethodPluginForm'
+  cart_item_holder_callback: 'fpPaymentCartContext::getInstance'
+  customer_model_name: 'sfGuardUser'
+  customer_callback:
     function: 'sfContext::getInstance'
     parameters: []
     subFunctions: ['getUser', 'getGuardUser']
-  object_classes_names: <?php echo sfConfig::get('fp_payment_cart_object_classes_names', 'product') ?> 
+  object_classe_name: <?php echo sfConfig::get('fp_payment_cart_object_classe_name', 'product') ?> 
   product_extra_fields: # it aren't dynamyc fields
 #    photo:
 #      name: photo

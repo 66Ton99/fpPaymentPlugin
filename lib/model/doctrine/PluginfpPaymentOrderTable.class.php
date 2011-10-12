@@ -43,7 +43,7 @@ abstract class PluginfpPaymentOrderTable extends Doctrine_Table
       'values' => $event['values']
     )));
     
-    $user = $context->getUser();
+    $user = $context->getCustomer();
     if (($order = $context->getOrderModel()) &&
         is_object($order) &&
         fpPaymentOrderStatusEnum::NEWONE != $order->getStatus())

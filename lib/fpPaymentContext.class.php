@@ -13,9 +13,11 @@
 class fpPaymentContext
 {
   
-  protected $user;
+  protected $customer;
   
   protected $cart;
+  
+  protected $priceManager;
   
   protected $paymentMethodsInstances = array();
   
@@ -163,7 +165,7 @@ class fpPaymentContext
   public function getCart()
   {
     if (empty($this->cart)) {
-      $this->cart = fpPaymentFunctions::getObjFromConfig('fp_payment_callback_cart_item_holder',
+      $this->cart = fpPaymentFunctions::getObjFromConfig('fp_payment_cart_item_holder_callback',
                                                          'fpPaymentCartContext::getInstance');
     }
     return $this->cart;
@@ -174,14 +176,22 @@ class fpPaymentContext
    *
    * @return sfGuardUser
    */
-  public function getUser()
+  public function getCustomer()
   {
-    if (empty($this->user)) {
-      $this->user = fpPaymentFunctions::getObjFromConfig('fp_payment_callback_user',
-                                                         array('function' => 'sfContext::getInstance',
-                                                               'parameters' => array(),
-                                                               'subFunctions' => array('getUser', 'getGuardUser')));
+    if (empty($this->customer)) {
+      $this->customer = fpPaymentFunctions::getObjFromConfig('fp_payment_customer_callback',
+                                                             array('function' => 'sfContext::getInstance',
+                                                                   'parameters' => array(),
+                                                                   'subFunctions' => array('getUser', 'getGuardUser')));
     } 
-    return $this->user;
+    return $this->customer;
+  }
+  
+  public function getPriceManager()
+  {
+    if (empty($this->priceManager)) {
+      $this->priceManager = new fpPaymentPriceManager($this->getCustomer());
+    }
+    return $this->priceManager;
   }
 }

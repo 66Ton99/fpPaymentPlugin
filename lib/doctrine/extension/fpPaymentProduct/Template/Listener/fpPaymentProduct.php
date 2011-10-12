@@ -19,4 +19,14 @@ class Doctrine_Template_Listener_fpPaymentProduct extends Doctrine_Record_Listen
   {
     $this->_options = $options;
   }
+  
+/**
+	 * 
+   * 
+   * @return bool
+   */
+  public function isFpPaymentProduct()
+  {
+    return true;
+  }
 }

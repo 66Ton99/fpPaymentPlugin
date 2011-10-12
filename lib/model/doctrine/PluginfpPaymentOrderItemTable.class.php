@@ -39,7 +39,7 @@ abstract class PluginfpPaymentOrderItemTable extends Doctrine_Table
     $items = $context->getCart()->getHolder()->getAll();
     $class = self::MODEL_NAME;
     $colums = array_keys($this->getColumns());
-    /* @var $item fpPaymentcart */
+    /* @var $item fpPaymentCart */
     foreach ($items as $item) {
       /* @var $model fpPaymentOrderItem */
       $model = new $class();
@@ -52,6 +52,9 @@ abstract class PluginfpPaymentOrderItemTable extends Doctrine_Table
         }
       }
       $model->setArray($params);
+      if ($item->getProduct()->getTable()->hasTemplate('fpPaymentTaxable')) {
+        $model->setTax($item->getProduct()->getTaxValue($item->getQuantity()));
+      }
       $model->save();
     }
   }

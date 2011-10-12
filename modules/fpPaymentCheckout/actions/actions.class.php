@@ -31,7 +31,7 @@ class fpPaymentCheckoutActions extends sfActions
       $this->redirect('@fpPaymentPlugin_info?method=' . $paymentMethod);
     }
     
-    $formClass = sfConfig::get('fp_payment_class_form_payment_method', 'fpPaymentMethodPluginForm');
+    $formClass = sfConfig::get('fp_payment_payment_method_class_form', 'fpPaymentMethodPluginForm');
     $this->form = new $formClass();
     $this->form
       ->getWidget('method')

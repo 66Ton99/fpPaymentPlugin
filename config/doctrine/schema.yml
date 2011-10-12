@@ -8,7 +8,7 @@ fpPaymentOrder:
     currency: {type: varchar(6), notnull: true}
   relations:
     Customer:
-      class: sfGuardUser
+      class: <?php echo sfConfig::get('fp_payment_customer_model_name', 'sfGuardUser') ?> 
       local:    customer_id
       onDelete: CASCADE
 
@@ -21,12 +21,35 @@ fpPaymentOrderItem:
     quantity: {type: integer, notnull: tru}
     name: {type: varchar(255)}
     price: {type: decimal(10), scale: 2, notnull: true}
+    tax: {type: decimal(10), scale: 5, notnull: true, default: 0.0}
   relations:
     Order:
       class: fpPaymentOrder
       local: oreder_id
       onDelete: CASCADE
     Product:
-      class: <?php echo sfConfig::get('fp_payment_object_classes_names', 'product') ?>
+      class: <?php echo sfConfig::get('fp_payment_object_classe_name', 'product') ?>
       local: object_id
       onDelete: CASCADE
+      
+fpPaymentCustomerProfile:
+  actAs:
+    Timestampable: ~
+  columns:
+    customer_id: { type: integer, notnull: true}
+    type: {type: enum, values: [<?php echo fpPaymentCustomerProfileTypeEnum::implode() ?>], notnull: true}
+    phone: {type: string(32), notnull: true}
+#    number: {type: string(32), notnull: true}
+#    street: {type: string(255), notnull: true}
+    address: {type: string(255), notnull: true}
+    address2: {type: string(255), notnull: false}
+    city: {type: string(255), notnull: true}
+    state: {type: string(3), notnull: false}
+    zip: {type: string(8), notnull: true}
+    country: {type: string(3), notnull: true}
+  relations:
+    Customer:
+      class: <?php echo sfConfig::get('fp_payment_customer_model_name', 'sfGuardUser') ?> 
+      local: customer_id
+      onDelete: CASCADE
+      onUpdate: NO ACTION
