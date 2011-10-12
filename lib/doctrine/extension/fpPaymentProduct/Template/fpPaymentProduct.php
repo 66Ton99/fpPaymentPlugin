@@ -54,18 +54,6 @@ class Doctrine_Template_fpPaymentProduct extends Doctrine_Template
         }
       }
     }
-    
-    $this->addListener(new Doctrine_Template_Listener_fpPaymentProduct($this->_options));
-  }
-  
-	/**
-	 * Product check
-   * 
-   * @return bool
-   */
-  public function isFpPaymentProduct()
-  {
-    return true;
   }
 }
 

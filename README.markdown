@@ -35,6 +35,17 @@ _schema.yml_
       columns:
         some_other_field: {type: integer, notnull: true}
         
+You have to implement fpPaymentProfileble behavior to your Customer model if you want use Profiles and Taxes
+        
+_sfGuardUser.class.php_
+        
+    public function setUp()
+    {
+      parent::setUp();
+      $this->actAs(new Doctrine_Template_fpPaymentProfileble(array()));
+    }    
+    
+    
 ## Features
 
 ### Events

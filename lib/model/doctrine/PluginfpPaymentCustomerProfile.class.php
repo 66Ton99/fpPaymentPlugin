@@ -19,14 +19,14 @@ abstract class PluginfpPaymentCustomerProfile extends BasefpPaymentCustomerProfi
   public function save(Doctrine_Connection $conn = null)
   {
     parent::save($conn);
-    if (ProfileTypeEnum::DEF == $this->getType()) {
+    if (fpPaymentCustomerProfileTypeEnum::DEF == $this->getType()) {
       $list = $this->getTable()
         ->createQuery('p')
-        ->andWhere('p.type = ?', ProfileTypeEnum::DEF)
+        ->andWhere('p.type = ?', fpPaymentCustomerProfileTypeEnum::DEF)
         ->andWhere('p.id != ?', $this->getId())
         ->execute();
       foreach ($list as $profile) {
-        $profile->setType(ProfileTypeEnum::SHIPPING);
+        $profile->setType(fpPaymentCustomerProfileTypeEnum::SHIPPING);
         $profile->save();
       }
     }
