@@ -1,4 +1,4 @@
-<?php echo $form->renderFormTag(url_for('@fpPaymentPlugin_checkout_payment_methods')) ?>
+<?php echo $form->renderFormTag(url_for('@fpPaymentPlugin_method')) ?>
   <table>
     <?php echo $form ?>
   </table>

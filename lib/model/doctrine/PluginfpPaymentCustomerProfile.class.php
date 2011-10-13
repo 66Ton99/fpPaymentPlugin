@@ -11,6 +11,57 @@
  */
 abstract class PluginfpPaymentCustomerProfile extends BasefpPaymentCustomerProfile
 {
+  
+	/**
+   * Get country title
+   *
+   * @return string
+   */
+  public function getCountryTitle()
+  {
+    return sfCultureInfo::getInstance(sfContext::getInstance()->getUser()->getCulture())->getCountry($this->getCountry());
+  }
+  
+	/**
+   * Retrun full addres
+   *
+   * @return string
+   */
+  public function getAddresString()
+  {
+    $addres = array();
+//    if ($this->getNumber())
+//    {
+//      $addres[] = $this->getNumber();
+//    }
+//    if ($this->getStreet())
+//    {
+//      $addres[] = $this->getStreet();
+//    }
+    if ($this->getAddress() || $this->getAddress2())
+    {
+      $addresString = $this->getAddress();
+      if ($addresString) $addresString .= ' ';
+      $addresString .= $this->getAddress2();
+      $addres[] = $addresString;
+    }
+    if ($this->getCity())
+    {
+      $addres[] = $this->getCity();
+    }
+    if ($this->getState() || $this->getZip())
+    {
+      $addresState = $this->getState();
+      if ($addresState) $addresState .= ' ';
+      $addresState .= $this->getCity();
+      $addres[] = $addresState;
+    }
+    if ($this->getCountry())
+    {
+      $addres[] = $this->getCountryTitle();
+    }
+    return implode(', ', $addres);
+  }
 
   /**
    * (non-PHPdoc)
@@ -19,16 +70,21 @@ abstract class PluginfpPaymentCustomerProfile extends BasefpPaymentCustomerProfi
   public function save(Doctrine_Connection $conn = null)
   {
     parent::save($conn);
-    if (fpPaymentCustomerProfileTypeEnum::DEF == $this->getType()) {
-      $list = $this->getTable()
-        ->createQuery('p')
-        ->andWhere('p.type = ?', fpPaymentCustomerProfileTypeEnum::DEF)
-        ->andWhere('p.id != ?', $this->getId())
+    $query = $this->getTable()
+      ->createQuery('cp')
+        ->update()
+        ->andWhere('cp.id != ?', $this->getId());
+    if ($this->getIsDefaultBilling()) {
+      $q = clone $query;
+      $q->andWhere('cp.is_default_billing = 1')
+        ->set('cp.is_default_billing', 0)
         ->execute();
-      foreach ($list as $profile) {
-        $profile->setType(fpPaymentCustomerProfileTypeEnum::SHIPPING);
-        $profile->save();
-      }
+    }
+    if ($this->getIsDefaultShipping()) {
+      $q = clone $query;
+      $q->andWhere('cp.is_default_shipping = 1')
+        ->set('cp.is_default_shipping', 0)
+        ->execute();
     }
   }
 }

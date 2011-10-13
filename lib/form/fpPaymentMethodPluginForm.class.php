@@ -16,13 +16,14 @@ class fpPaymentMethodPluginForm extends BaseForm
    */
   public function setup()
   {
+    $paymentMethods = fpPaymentContext::getInstance()->getPaymentMethods();
     $this->setWidgets(array(
-      'method' => new sfWidgetFormSelect(array('choices' => array(),
+      'method' => new sfWidgetFormSelect(array('choices' => $paymentMethods,
                                                'label' => 'Payment method'))
     ));
     
     $this->setValidators(array(
-      'method' => new sfValidatorChoice(array('required' => true, 'choices' => array())),
+      'method' => new sfValidatorChoice(array('required' => true, 'choices' => array_keys($paymentMethods))),
     ));
     $widgetSchema = $this->getWidgetSchema();
     $widgetSchema->setNameFormat(get_class($this) . '[' . $widgetSchema->getNameFormat() . ']');

@@ -1,14 +1,30 @@
-fpPaymentPlugin_checkout_payment_methods:
+fpPaymentPlugin_cart:
+  url:   /cart
+  param: { module: fpPaymentCart, action: show }
+
+fpPaymentPlugin_checkout:
   url:   /checkout
   param: { module: fpPaymentCheckout, action: index }
 
-#fpPaymentPlugin_order:
-#  url:   /checkout/order
-#  param: { module: fpPaymentCheckout, action: order }
+fpPaymentPlugin_billing:
+  url:   /checkout/billing
+  param: { module: fpPaymentCheckout, action: billing }
   
+fpPaymentPlugin_shipping:
+  url:   /checkout/shipping
+  param: { module: fpPaymentCheckout, action: shipping }
+
+fpPaymentPlugin_method:
+  url:   /checkout/method
+  param: { module: fpPaymentCheckout, action: method }
+
 fpPaymentPlugin_info:
-  url:   /checkout/info/:method
+  url:   /checkout/payment/:method
   param: { module: fpPaymentCheckout, action: info }
+  
+fpPaymentPlugin_order:
+  url:   /checkout/order
+  param: { module: fpPaymentCheckout, action: order }
   
 fpPaymentPlugin_error:
   url:   /checkout/error/:method
@@ -18,6 +34,5 @@ fpPaymentPlugin_success:
   url:   /checkout/success/:method
   param: { module: fpPaymentCheckout, action: success }
   
-fpPaymentPlugin_cart:
-  url:   /cart
-  param: { module: fpPaymentCart, action: show }
+
+  

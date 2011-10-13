@@ -10,7 +10,7 @@ class fpPaymentCheckoutActions extends sfActions
 {
   
   /**
-   * Fist step choose payment
+   * Must do somthing but by default redirect to firststep
    *
    * @param sfWebRequest $request
    *
@@ -18,36 +18,80 @@ class fpPaymentCheckoutActions extends sfActions
    */
   public function executeIndex(sfWebRequest $request)
   {
-    if (fpPaymentContext::getInstance()->getCart()->isEmpty()) {
-      return $this->redirect('@fpPaymentPlugin_cart');
-    }
-    
-    $paymentMethods = fpPaymentContext::getInstance()->getPaymentMethods();
-    if (!count($paymentMethods)) {
-      throw new sfException('No payment methods.');
-    }
-    if (1 == count($paymentMethods)) {
-      $paymentMethod = array_pop($paymentMethods);
-      $this->redirect('@fpPaymentPlugin_info?method=' . $paymentMethod);
-    }
-    
-    $formClass = sfConfig::get('fp_payment_payment_method_class_form', 'fpPaymentMethodPluginForm');
-    $this->form = new $formClass();
-    $this->form
-      ->getWidget('method')
-      ->addOption('choices', $paymentMethods);
-    $this->form
-      ->getValidator('method')
-      ->addOption('choices', array_keys($paymentMethods));
-      
-    if (sfRequest::POST == $request->getMethod()) {
-      $this->form->bind($request->getParameter($this->form->getName()));
-      $this->redirectIf($this->form->isValid(), '@fpPaymentPlugin_info?method=' . $this->form->getValue('method'));
+    if (class_exists('fpPaymentTaxContext')) {
+      $this->redirect(sfConfig::get('fp_payment_checkout_billing_step', '@fpPaymentPlugin_billing'));
+    } else {
+      $this->redirect(sfConfig::get('fp_payment_checkout_first_step', '@fpPaymentPlugin_method'));
     }
   }
   
   /**
-   * Second step payment info
+   * Billing address
+   *
+   * @param sfWebRequest $request
+   *
+   * @return void
+   */
+  public function executeBilling(sfWebRequest $request)
+  {
+    if (fpPaymentContext::getInstance()->getCart()->isEmpty()) {
+      return $this->redirect('@fpPaymentPlugin_cart');
+    }
+    $formClass = sfConfig::get('fp_payment_select_profile_class_form', 'fpPaymentSelectProfileForm');
+    $form = new $formClass();
+    if (sfRequest::POST == $request->getMethod()) {
+      $form->bind($request->getParameter($form->getName()));
+      if ($form->isValid()) {
+        
+        
+        $this->redirect(sfConfig::get('fp_payment_checkout_first_step', '@fpPaymentPlugin_method'));
+      }
+    }
+  }
+  
+  /**
+   * Shipping address
+   *
+   * @param sfWebRequest $request
+   *
+   * @return void
+   */
+  public function executeShipping(sfWebRequest $request)
+  {
+    if (fpPaymentContext::getInstance()->getCart()->isEmpty()) {
+      return $this->redirect('@fpPaymentPlugin_cart');
+    }
+    $formClass = sfConfig::get('fp_payment_select_profile_class_form', 'fpPaymentSelectProfileForm');
+    $this->form = new $formClass(array(), array('isBilling' => false));
+  }
+  
+  /**
+   * Chose payment method
+   *
+   * @param sfWebRequest $request
+   *
+   * @return void
+   */
+  public function executeMethod(sfWebRequest $request)
+  {
+    if (fpPaymentContext::getInstance()->getCart()->isEmpty()) {
+      return $this->redirect('@fpPaymentPlugin_cart');
+    }
+    $paymentMethods = fpPaymentContext::getInstance()->getPaymentMethods();
+    if (1 == count($paymentMethods)) {
+      $paymentMethod = array_pop($paymentMethods);
+      $this->redirect('@fpPaymentPlugin_info?method=' . $paymentMethod);
+    }
+    $formClass = sfConfig::get('fp_payment_payment_method_class_form', 'fpPaymentMethodPluginForm');
+    $form = new $formClass();
+    if (sfRequest::POST == $request->getMethod()) {
+      $form->bind($request->getParameter($form->getName()));
+      $this->redirectIf($form->isValid(), '@fpPaymentPlugin_info?method=' . $form->getValue('method'));
+    }
+  }
+  
+  /**
+   * Payment info
    *
    * @param sfWebRequest $request
    *

@@ -37,7 +37,6 @@ fpPaymentCustomerProfile:
     Timestampable: ~
   columns:
     customer_id: { type: integer, notnull: true}
-    type: {type: enum, values: [<?php echo fpPaymentCustomerProfileTypeEnum::implode() ?>], notnull: true}
     phone: {type: string(32), notnull: true}
 #    number: {type: string(32), notnull: true}
 #    street: {type: string(255), notnull: true}
@@ -47,6 +46,8 @@ fpPaymentCustomerProfile:
     state: {type: string(3), notnull: false}
     zip: {type: string(8), notnull: true}
     country: {type: string(3), notnull: true}
+    is_default_billing: {type: boolean, notnull: true, default: 1}
+    is_default_shipping: {type: boolean, notnull: true, default: 1}
   relations:
     Customer:
       class: <?php echo sfConfig::get('fp_payment_customer_model_name', 'sfGuardUser') ?> 

@@ -9,6 +9,9 @@ all:
     parameters: []
     subFunctions: ['getUser', 'getGuardUser']
   object_classe_name: <?php echo sfConfig::get('fp_payment_cart_object_classe_name', 'product') ?> 
+  checkout_first_step: '@fpPaymentPlugin_method'
+  checkout_billing_step: '@fpPaymentPlugin_billing'
+  select_profile_class_form: 'fpPaymentSelectProfileForm'
   product_extra_fields: # it aren't dynamyc fields
 #    photo:
 #      name: photo
