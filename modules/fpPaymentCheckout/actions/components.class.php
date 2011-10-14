@@ -9,6 +9,20 @@
  */
 class fpPaymentCheckoutComponents extends sfComponents
 {
+  
+  /**
+   * Validate form
+   *
+   * @return bool
+   */
+  protected function validateForm($form)
+  {
+    $request = $this->getRequest();
+    if (sfRequest::POST == $request->getMethod()) {
+      $form->bind($request->getParameter($form->getName()));
+      return $form->isValid();
+    }
+  }
 
   /**
    * Method
@@ -29,6 +43,7 @@ class fpPaymentCheckoutComponents extends sfComponents
     
     $formClass = sfConfig::get('fp_payment_payment_method_class_form', 'fpPaymentMethodPluginForm');
     $this->form = new $formClass();
+    $this->validateForm($this->form);
   }
   
   /**
@@ -40,5 +55,18 @@ class fpPaymentCheckoutComponents extends sfComponents
   {
     $formClass = sfConfig::get('fp_payment_select_profile_class_form', 'fpPaymentSelectProfileForm');
     $this->form = new $formClass();
+    $this->validateForm($this->form);
+  }
+  
+  /**
+   * Enter or create profile
+   *
+   * @return void
+   */
+  public function executeProfile()
+  {
+    $this->form = new fpPaymentCustomerProfileForm(fpPaymentContext::getInstance()->getCustomer()->getCurrentBillingProfile());
+    $this->form->setWidget('save', new sfWidgetFormInputCheckbox());
+    $this->validateForm($this->form);
   }
 }

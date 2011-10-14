@@ -10,6 +10,10 @@ fpPaymentPlugin_billing:
   url:   /checkout/billing
   param: { module: fpPaymentCheckout, action: billing }
   
+fpPaymentPlugin_profile:
+  url:   /checkout/profile
+  param: { module: fpPaymentCheckout, action: profile }
+  
 fpPaymentPlugin_shipping:
   url:   /checkout/shipping
   param: { module: fpPaymentCheckout, action: shipping }

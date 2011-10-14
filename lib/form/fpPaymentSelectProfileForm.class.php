@@ -17,6 +17,7 @@ class fpPaymentSelectProfileForm extends BaseForm
   public function setup()
   {
     $profiles = fpPaymentContext::getInstance()->getCustomer()->getProfilesList($this->getOption('isBilling', true));
+    $profiles['new'] = 'New address';
     $this->setWidgets(array(
       'profile' => new sfWidgetFormSelect(array('choices' => $profiles,
                                                 'label' => $this->getOption('isBilling', true)?
