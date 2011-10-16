@@ -65,8 +65,13 @@ class fpPaymentCheckoutComponents extends sfComponents
    */
   public function executeProfile()
   {
-    $this->form = new fpPaymentCustomerProfileForm(fpPaymentContext::getInstance()->getCustomer()->getCurrentBillingProfile());
-    $this->form->setWidget('save', new sfWidgetFormInputCheckbox());
+    $profile = fpPaymentContext::getInstance()->getCustomer()->getCurrentBillingProfile();
+    if (!empty($profile) && $profile->getId()) {
+      $profile = $profile->copy();
+    }
+    $this->form = new fpPaymentCustomerProfileForm($profile);
+    $this->form->addSaveChckbox();
+    $this->form->setDefault('customer_id', fpPaymentContext::getInstance()->getCustomer()->getId());
     $this->validateForm($this->form);
   }
 }

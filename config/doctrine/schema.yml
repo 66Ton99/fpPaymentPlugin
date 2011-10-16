@@ -28,7 +28,7 @@ fpPaymentOrderItem:
       local: oreder_id
       onDelete: CASCADE
     Product:
-      class: <?php echo sfConfig::get('fp_payment_object_classe_name', 'product') ?>
+      class: <?php echo sfConfig::get('fp_payment_object_classe_name', 'Product') ?>
       local: object_id
       onDelete: CASCADE
       

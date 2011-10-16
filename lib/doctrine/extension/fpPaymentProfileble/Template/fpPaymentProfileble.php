@@ -13,21 +13,6 @@ class Doctrine_Template_fpPaymentProfileble extends Doctrine_Template
   protected $currentBillingProfile;
   
   protected $currentShippingProfile;
-
-  /**
-   * (non-PHPdoc)
-   * @see Doctrine_Template::setUp()
-   */
-  public function setUp()
-  {
-    $this->currentBillingProfile = sfContext::getInstance()
-                                     ->getUser()
-                                     ->getAttribute('billing_rofile',null, sfConfig::get('fp_payment_profiles_ns'));
-    $this->currentShippingProfile = sfContext::getInstance()
-                                     ->getUser()
-                                     ->getAttribute('shipping_rofile',null, sfConfig::get('fp_payment_profiles_ns'));
-  }
-  
   
   /**
    * Get billing profile
@@ -66,13 +51,12 @@ class Doctrine_Template_fpPaymentProfileble extends Doctrine_Template
   public function getProfilesList($isBilling = true)
   {
     $profiles = $this->getInvoker()->getFpPaymentCustomerProfile();
-    $profilesList = array();
+    $keys = array();
+    $values = array();
     /* @var $profile fpPaymentCustomerProfile */
     foreach ($profiles as $profile) {
-      $keys = array();
-      $values = array();
-      if (($isBilling && 1 == $profile->getIsDefaultBilling()) ||
-          (!$isBilling && 1 == $profile->getIsDefaultShipping()))
+      if (($isBilling && $profile->getIsDefaultBilling()) ||
+          (!$isBilling && $profile->getIsDefaultShipping()))
       {
         array_unshift($keys, $profile->getId());
         array_unshift($values, $profile->getAddresString());
@@ -82,6 +66,18 @@ class Doctrine_Template_fpPaymentProfileble extends Doctrine_Template
       }
     }
     return array_combine($keys, $values);;
+  }
+  
+  /**
+   * Check urrent profile
+   *
+   * @return bool
+   */
+  public function hasCurrentBillingProfile()
+  {
+    return sfContext::getInstance()
+      ->getUser()
+      ->hasAttribute('billing_rofile', sfConfig::get('fp_payment_profiles_ns', 'fpPaymentCurrentProfiles'));
   }
 
   /**
@@ -95,7 +91,7 @@ class Doctrine_Template_fpPaymentProfileble extends Doctrine_Template
   {
     sfContext::getInstance()
       ->getUser()
-      ->setAttribute('billing_rofile', $profile, sfConfig::get('fp_payment_profiles_ns'));
+      ->setAttribute('billing_rofile', $profile, sfConfig::get('fp_payment_profiles_ns', 'fpPaymentCurrentProfiles'));
     $this->currentBillingProfile = $profile;
     return $this->getInvoker();
   }
@@ -107,8 +103,25 @@ class Doctrine_Template_fpPaymentProfileble extends Doctrine_Template
    */
   public function getCurrentBillingProfile()
   {
-    if (!empty($this->currentBillingProfile)) return $this->getBillingProfile();
+    $this->currentBillingProfile = sfContext::getInstance()
+                                       ->getUser()
+                                       ->getAttribute('billing_rofile',
+                                                      $this->getBillingProfile(),
+                                                      sfConfig::get('fp_payment_profiles_ns', 'fpPaymentCurrentProfiles'));
+    
     return $this->currentBillingProfile;
+  }
+  
+	/**
+   * Check urrent profile
+   *
+   * @return bool
+   */
+  public function hasCurrentShippingProfile()
+  {
+    return sfContext::getInstance()
+      ->getUser()
+      ->hasAttribute('shipping_rofile', sfConfig::get('fp_payment_profiles_ns', 'fpPaymentCurrentProfiles'));
   }
   
 	/**
@@ -122,7 +135,7 @@ class Doctrine_Template_fpPaymentProfileble extends Doctrine_Template
   {
     sfContext::getInstance()
       ->getUser()
-      ->setAttribute('shipping_rofile', $profile, sfConfig::get('fp_payment_profiles_ns'));
+      ->setAttribute('shipping_rofile', $profile, sfConfig::get('fp_payment_profiles_ns', 'fpPaymentCurrentProfiles'));
     $this->currentShippingProfile = $profile;
     return $this->getInvoker();
   }
@@ -134,7 +147,11 @@ class Doctrine_Template_fpPaymentProfileble extends Doctrine_Template
    */
   public function getCurrentShippingProfile()
   {
-    if (!empty($this->currentShippingProfile)) return $this->getShippingProfile();
+    $this->currentShippingProfile = sfContext::getInstance()
+                                       ->getUser()
+                                       ->getAttribute('shipping_rofile',
+                                                      $this->getShippingProfile(),
+                                                      sfConfig::get('fp_payment_profiles_ns', 'fpPaymentCurrentProfiles'));
     return $this->currentShippingProfile;
   }
 }

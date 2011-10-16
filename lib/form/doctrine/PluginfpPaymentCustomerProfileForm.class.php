@@ -17,8 +17,15 @@ abstract class PluginfpPaymentCustomerProfileForm extends BasefpPaymentCustomerP
    */
   public function configure()
   {
-    unset($this['customer_id'], $this['created_at'], $this['updated_at']);
+    unset($this['created_at'], $this['updated_at']);
+    $this->setWidget('customer_id', new sfWidgetFormInputHidden());
     $this->setWidget('country', new sfWidgetFormI18nChoiceCountry());
     $this->setValidator('country', new sfValidatorI18nChoiceCountry());
+  }
+  
+  public function addSaveChckbox()
+  {
+    $this->setWidget('save', new sfWidgetFormInputCheckbox());
+    $this->setValidator('save', new sfValidatorBoolean());
   }
 }

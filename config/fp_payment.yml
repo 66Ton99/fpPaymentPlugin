@@ -7,7 +7,7 @@ all:
     function: 'sfContext::getInstance'
     parameters: []
     subFunctions: ['getUser', 'getGuardUser']
-  object_classe_name: 'product' 
+  object_classe_name: 'Product' 
   checkout_first_step: '@fpPaymentPlugin_method'
   checkout_billing_step: '@fpPaymentPlugin_billing'
   select_profile_class_form: 'fpPaymentSelectProfileForm'

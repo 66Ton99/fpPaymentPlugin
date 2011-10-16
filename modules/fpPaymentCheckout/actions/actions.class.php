@@ -44,7 +44,7 @@ class fpPaymentCheckoutActions extends sfActions
           return $this->redirect('@fpPaymentPlugin_profile');
         }
         $customer = fpPaymentContext::getInstance()->getCustomer();
-        $customer->setCurrentBillingProfile($customer->getFpPaymentCustomerProfile()->get($form->getValue('profile')));
+        $customer->setCurrentBillingProfile(fpPaymentCustomerProfileTable::getInstance()->findOneById($form->getValue('profile')));
         
         $this->redirect('@fpPaymentPlugin_method');
       }
@@ -61,15 +61,16 @@ class fpPaymentCheckoutActions extends sfActions
   public function executeProfile(sfWebRequest $request)
   {
     $form = new fpPaymentCustomerProfileForm();
-    $form->setWidget('save', new sfWidgetFormInputCheckbox());
-    if (in_array($request->getMethod(), array(sfRequest::POST, sfRequest::PUT))) {
+    $form->addSaveChckbox();
+    $form->setDefault('customer_id', fpPaymentContext::getInstance()->getCustomer()->getId());
+    if ($request->isMethod(sfRequest::POST)) {
       $form->bind($request->getParameter($form->getName()));
       if ($form->isValid()) {
         if ($form->getValue('save')) {
           $form->save();
+        } else {
+          $form->updateObject($form->getValues());
         }
-        
-        var_dump($form->getObject());die('OK');
         fpPaymentContext::getInstance()->getCustomer()->setCurrentBillingProfile($form->getObject());
         $this->redirect('@fpPaymentPlugin_method');
       }
