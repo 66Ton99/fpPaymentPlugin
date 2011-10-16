@@ -48,9 +48,17 @@ class Doctrine_Template_fpPaymentProfileble extends Doctrine_Template
     return null;
   }
 
+  /**
+   * Return array of addresses
+   * 
+   * @param bool $isBilling
+   *
+   * @return array
+   */
   public function getProfilesList($isBilling = true)
   {
     $profiles = $this->getInvoker()->getFpPaymentCustomerProfile();
+    if (!count($profiles)) return array();
     $keys = array();
     $values = array();
     /* @var $profile fpPaymentCustomerProfile */
