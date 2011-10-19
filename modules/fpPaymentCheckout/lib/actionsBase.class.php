@@ -36,17 +36,21 @@ class fpPaymentCheckoutActionsBase extends sfActions
   {
     if (fpPaymentContext::getInstance()->getCart()->isEmpty()) return $this->redirect('@fpPaymentPlugin_cart');
     $formClass = sfConfig::get('fp_payment_select_profile_class_form', 'fpPaymentSelectProfileForm');
-    $form = new $formClass();
+    $this->isBilling = true;
+    $form = new $formClass(array(), array('isBilling' => $this->isBilling));
     if (sfRequest::POST == $request->getMethod()) {
       $form->bind($request->getParameter($form->getName()));
       if ($form->isValid()) {
         if ('new' == $form->getValue('profile')) {
-          return $this->redirect('@fpPaymentPlugin_profile');
+          return $this->redirect('@fpPaymentPlugin_profile?is_billing=1');
         }
         $customer = fpPaymentContext::getInstance()->getCustomer();
         $customer->setCurrentBillingProfile(fpPaymentCustomerProfileTable::getInstance()->findOneById($form->getValue('profile')));
-        
-        $this->redirect('@fpPaymentPlugin_method');
+        if (sfConfig::get('fp_payment_shipping_context_class_name')) {
+          $this->redirect('@fpPaymentPlugin_shipping');
+        } else {
+          $this->redirect('@fpPaymentPlugin_method');
+        }
       }
     }
   }
@@ -71,8 +75,17 @@ class fpPaymentCheckoutActionsBase extends sfActions
         } else {
           $form->updateObject($form->getValues());
         }
-        fpPaymentContext::getInstance()->getCustomer()->setCurrentBillingProfile($form->getObject());
-        $this->redirect('@fpPaymentPlugin_method');
+        if ($request->getParameter('is_billing')) {
+          fpPaymentContext::getInstance()->getCustomer()->setCurrentBillingProfile($form->getObject());
+          if (sfConfig::get('fp_payment_shipping_context_class_name')) {
+            $this->redirect('@fpPaymentPlugin_shipping');
+          } else {
+            $this->redirect('@fpPaymentPlugin_method');
+          }
+        } else {
+          fpPaymentContext::getInstance()->getCustomer()->setCurrentShippingProfile($form->getObject());
+          $this->redirect('@fpPaymentPlugin_method');
+        }
       }
     }
   }
@@ -88,7 +101,20 @@ class fpPaymentCheckoutActionsBase extends sfActions
   {
     if (fpPaymentContext::getInstance()->getCart()->isEmpty()) return $this->redirect('@fpPaymentPlugin_cart');
     $formClass = sfConfig::get('fp_payment_select_profile_class_form', 'fpPaymentSelectProfileForm');
-    $this->form = new $formClass(array(), array('isBilling' => false));
+    $this->isBilling = false;
+    $form = new $formClass(array(), array('isBilling' => $this->isBilling));
+    if (sfRequest::POST == $request->getMethod()) {
+      $form->bind($request->getParameter($form->getName()));
+      if ($form->isValid()) {
+        if ('new' == $form->getValue('profile')) {
+          return $this->redirect('@fpPaymentPlugin_profile?is_billing=0');
+        }
+        $customer = fpPaymentContext::getInstance()->getCustomer();
+        $customer->setCurrentShippingProfile(fpPaymentCustomerProfileTable::getInstance()->findOneById($form->getValue('profile')));
+        
+        $this->redirect('@fpPaymentPlugin_method');
+      }
+    }
   }
   
   /**

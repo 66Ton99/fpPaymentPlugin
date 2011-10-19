@@ -51,10 +51,10 @@ class fpPaymentCheckoutComponentsBase extends sfComponents
    *
    * @return void
    */
-  public function executeBilling()
+  public function executeSelectProfile()
   {
     $formClass = sfConfig::get('fp_payment_select_profile_class_form', 'fpPaymentSelectProfileForm');
-    $this->form = new $formClass();
+    $this->form = new $formClass(array(), array('isBilling' => $this->isBilling));
     $this->validateForm($this->form);
   }
   
@@ -65,13 +65,19 @@ class fpPaymentCheckoutComponentsBase extends sfComponents
    */
   public function executeProfile()
   {
-    $profile = fpPaymentContext::getInstance()->getCustomer()->getCurrentBillingProfile();
+    $customer = fpPaymentContext::getInstance()->getCustomer();
+    if ($this->getRequest()->getParameter('is_billing')) {
+      $profile = $customer->getCurrentBillingProfile();
+    } else {
+      $profile = $customer->getCurrentShippingProfile();
+    }
+    
     if (!empty($profile) && $profile->getId()) {
       $profile = $profile->copy();
     }
     $this->form = new fpPaymentCustomerProfileForm($profile);
     $this->form->addSaveChckbox();
-    $this->form->setDefault('customer_id', fpPaymentContext::getInstance()->getCustomer()->getId());
+    $this->form->setDefault('customer_id', $customer->getId());
     $this->validateForm($this->form);
   }
 }

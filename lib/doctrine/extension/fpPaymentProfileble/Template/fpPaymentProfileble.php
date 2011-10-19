@@ -55,7 +55,7 @@ class Doctrine_Template_fpPaymentProfileble extends Doctrine_Template
    *
    * @return array
    */
-  public function getProfilesList($isBilling = true)
+  public function profilesToArray($isBilling = true)
   {
     $profiles = $this->getInvoker()->getFpPaymentCustomerProfile();
     if (!count($profiles)) return array();
