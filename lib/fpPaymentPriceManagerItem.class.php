@@ -58,7 +58,37 @@ class fpPaymentPriceManagerItem
    */
   public function getPrice()
   {
-    return $this->quntity * $this->item->getPrice();
+    return $this->getQuntity() * $this->getItemPrice();
+  }
+  
+  /**
+   * Get item
+   *
+   * @return Product
+   */
+  public function getItem()
+  {
+    return $this->item;
+  }
+  
+	/**
+   * Get price of item
+   *
+   * @return double
+   */
+  public function getItemPrice()
+  {
+    return $this->getItem()->getPrice();
+  }
+  
+	/**
+   * Get items quantity
+   *
+   * @return int
+   */
+  public function getQuntity()
+  {
+    return $this->quntity;
   }
   
   /**
@@ -68,8 +98,8 @@ class fpPaymentPriceManagerItem
    */
   public function getTaxValue()
   {
-    if ($this->item->getTable()->hasTemplate('fpPaymentTaxable')) {
-      return $this->item->getTaxValue($this->quntity);
+    if ($this->getItem()->getTable()->hasTemplate('fpPaymentTaxable')) {
+      return $this->getItem()->getTaxValue($this->getQuntity());
     } else {
       return 0.00;
     }

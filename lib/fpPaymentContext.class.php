@@ -187,6 +187,11 @@ class fpPaymentContext
     return $this->customer;
   }
   
+  /**
+   * Get price manager
+   *
+   * @return fpPaymentPriceManager
+   */
   public function getPriceManager()
   {
     if (empty($this->priceManager)) {

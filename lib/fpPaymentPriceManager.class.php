@@ -50,6 +50,18 @@ class fpPaymentPriceManager
   }
   
   /**
+   * 
+   *
+   * @param double $value
+   *
+   * @return double
+   */
+  protected function getRoundedValue($value)
+  {
+    return round($value, 2);
+  }
+  
+  /**
    * Get sum
    *
    * @return double
@@ -61,17 +73,7 @@ class fpPaymentPriceManager
     foreach ($this->getItems() as $item) {
       $sum += $item->getPrice();
     }
-    return round($sum + $this->getTaxValue(), 2);
-  }
-  
-  /**
-   * Get tax object
-   *
-   * @return
-   */
-  public function getTax()
-  {
-    return $this->tax;
+    return $this->getRoundedValue($sum + $this->getTaxValue());
   }
   
   /** 
@@ -88,6 +90,21 @@ class fpPaymentPriceManager
     foreach ($this->getItems() as $item) {
       $taxes += $item->getTaxValue();
     }
-    return round($taxes, 2);
+    return $this->getRoundedValue($taxes);
+  }
+  
+  /**
+   * Get shipping price
+   *
+   * @return double
+   */
+  public function getShippingPrice()
+  {
+    $class = sfConfig::get('fp_payment_shipping_context_class_name', 'fpPaymentShippingContext');
+    if ($class && class_exists($class)) {
+      $shipping = new $class($this->getItems());
+      return $this->getRoundedValue($shipping->getPrice());
+    }
+    return 0.00;
   }
 }
