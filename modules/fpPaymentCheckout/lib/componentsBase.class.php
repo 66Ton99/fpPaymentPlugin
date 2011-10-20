@@ -80,4 +80,18 @@ class fpPaymentCheckoutComponentsBase extends sfComponents
     $this->form->setDefault('customer_id', $customer->getId());
     $this->validateForm($this->form);
   }
+  
+  public function executeOrderReview()
+  {
+    $paymentContext = fpPaymentContext::getInstance();
+    $this->cart = $paymentContext->getCart()->getHolder()->getAll();
+    $this->cartPriceManager = $paymentContext->getCart()->getPriceManager();
+    $this->customer = $paymentContext->getCustomer();
+    $this->paymentMethod = $this->getContext()->getUser()->getAttribute('paymentMethod',
+                                                                        null,
+                                                                        sfConfig::get('fp_payment_main_ns', 'fpPaymentNS'));
+    $formClass = sfConfig::get('fp_payment_order_class_form', 'fpPaymentOrderReviewForm');
+    $this->form = new $formClass();
+    $this->validateForm($this->form);
+  }
 }

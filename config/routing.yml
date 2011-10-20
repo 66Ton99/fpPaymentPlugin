@@ -23,19 +23,23 @@ fpPaymentPlugin_method:
   param: { module: fpPaymentCheckout, action: method }
 
 fpPaymentPlugin_info:
-  url:   /checkout/payment/:method
+  url:   /checkout/payment
   param: { module: fpPaymentCheckout, action: info }
   
-fpPaymentPlugin_order:
-  url:   /checkout/order
-  param: { module: fpPaymentCheckout, action: order }
+fpPaymentPlugin_shippingMethod:
+  url:   /checkout/shippingMethod
+  param: { module: fpPaymentCheckout, action: shippingMethod }
+
+fpPaymentPlugin_orderReview:
+  url:   /checkout/orderReview
+  param: { module: fpPaymentCheckout, action: orderReview }
   
 fpPaymentPlugin_error:
-  url:   /checkout/error/:method
+  url:   /checkout/error
   param: { module: fpPaymentCheckout, action: error }
 
 fpPaymentPlugin_success:
-  url:   /checkout/success/:method
+  url:   /checkout/success
   param: { module: fpPaymentCheckout, action: success }
   
 

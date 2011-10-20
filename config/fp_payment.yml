@@ -11,6 +11,8 @@ all:
   checkout_first_step: '@fpPaymentPlugin_method'
   checkout_billing_step: '@fpPaymentPlugin_billing'
   select_profile_class_form: 'fpPaymentSelectProfileForm'
+  order_class_form: 'fpPaymentOrderReviewForm'
+  main_ns: 'fpPaymentNS'
   profiles_ns: 'fpPaymentCurrentProfiles'
   product_extra_fields: # it aren't dynamyc fields
 #    photo:

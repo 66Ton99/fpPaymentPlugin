@@ -10,6 +10,16 @@ class fpPaymentCheckoutActionsBase extends sfActions
 {
   
   /**
+   * Check is cart empty or not
+   *
+   * @return void
+   */
+  protected function checkCart()
+  {
+    if (fpPaymentContext::getInstance()->getCart()->isEmpty()) $this->redirect('@fpPaymentPlugin_cart');
+  } 
+  
+  /**
    * Must do somthing but by default redirect to firststep
    *
    * @param sfWebRequest $request
@@ -34,7 +44,7 @@ class fpPaymentCheckoutActionsBase extends sfActions
    */
   public function executeBilling(sfWebRequest $request)
   {
-    if (fpPaymentContext::getInstance()->getCart()->isEmpty()) return $this->redirect('@fpPaymentPlugin_cart');
+    $this->checkCart();
     $formClass = sfConfig::get('fp_payment_select_profile_class_form', 'fpPaymentSelectProfileForm');
     $this->isBilling = true;
     $form = new $formClass(array(), array('isBilling' => $this->isBilling));
@@ -64,6 +74,7 @@ class fpPaymentCheckoutActionsBase extends sfActions
    */
   public function executeProfile(sfWebRequest $request)
   {
+    $this->checkCart();
     $form = new fpPaymentCustomerProfileForm();
     $form->addSaveChckbox();
     $form->setDefault('customer_id', fpPaymentContext::getInstance()->getCustomer()->getId());
@@ -84,7 +95,7 @@ class fpPaymentCheckoutActionsBase extends sfActions
           }
         } else {
           fpPaymentContext::getInstance()->getCustomer()->setCurrentShippingProfile($form->getObject());
-          $this->redirect('@fpPaymentPlugin_method');
+          $this->redirect('@fpPaymentPlugin_shippingMethod');
         }
       }
     }
@@ -99,7 +110,7 @@ class fpPaymentCheckoutActionsBase extends sfActions
    */
   public function executeShipping(sfWebRequest $request)
   {
-    if (fpPaymentContext::getInstance()->getCart()->isEmpty()) return $this->redirect('@fpPaymentPlugin_cart');
+    $this->checkCart();
     $formClass = sfConfig::get('fp_payment_select_profile_class_form', 'fpPaymentSelectProfileForm');
     $this->isBilling = false;
     $form = new $formClass(array(), array('isBilling' => $this->isBilling));
@@ -112,9 +123,22 @@ class fpPaymentCheckoutActionsBase extends sfActions
         $customer = fpPaymentContext::getInstance()->getCustomer();
         $customer->setCurrentShippingProfile(fpPaymentCustomerProfileTable::getInstance()->findOneById($form->getValue('profile')));
         
-        $this->redirect('@fpPaymentPlugin_method');
+        $this->redirect('@fpPaymentPlugin_shippingMethod');
       }
     }
+  }
+  
+  /**
+   * Select shipping method
+   *
+   * @param sfWebRequest $request
+   *
+   * @return void
+   */
+  public function executeShippingMethod(sfWebRequest $request)
+  {
+    $this->checkCart();
+    $this->forward('fpPaymentShipping', 'index');
   }
   
   /**
@@ -126,17 +150,22 @@ class fpPaymentCheckoutActionsBase extends sfActions
    */
   public function executeMethod(sfWebRequest $request)
   {
-    if (fpPaymentContext::getInstance()->getCart()->isEmpty()) return $this->redirect('@fpPaymentPlugin_cart');
+    $this->checkCart();
     $paymentMethods = fpPaymentContext::getInstance()->getPaymentMethods();
     if (1 == count($paymentMethods)) {
       $paymentMethod = array_pop($paymentMethods);
-      $this->redirect('@fpPaymentPlugin_info?method=' . $paymentMethod);
+      $this->getContext()->getUser()->setAttribute('paymentMethod',
+                                                   $paymentMethod,
+                                                   sfConfig::get('fp_payment_main_ns', 'fpPaymentNS'));
     }
     $formClass = sfConfig::get('fp_payment_payment_method_class_form', 'fpPaymentMethodPluginForm');
     $form = new $formClass();
     if (sfRequest::POST == $request->getMethod()) {
       $form->bind($request->getParameter($form->getName()));
-      $this->redirectIf($form->isValid(), '@fpPaymentPlugin_info?method=' . $form->getValue('method'));
+      $this->getContext()->getUser()->setAttribute('paymentMethod',
+                                                   $form->getValue('method'),
+                                                   sfConfig::get('fp_payment_main_ns', 'fpPaymentNS'));
+      $this->redirectIf($form->isValid(), '@fpPaymentPlugin_info');
     }
   }
   
@@ -149,9 +178,46 @@ class fpPaymentCheckoutActionsBase extends sfActions
    */
   public function executeInfo(sfWebRequest $request)
   {
-    if (fpPaymentContext::getInstance()->getCart()->isEmpty()) return $this->redirect('@fpPaymentPlugin_cart');
-    $method = 'get' . $request->getParameter('method');
+    $this->checkCart();
+    $method = 'get' . $this->getContext()->getUser()->getAttribute('paymentMethod',
+                                                                   null,
+                                                                   sfConfig::get('fp_payment_main_ns', 'fpPaymentNS'));
     fpPaymentContext::getInstance()->$method()->renderInfoPage($this, $request);
+  }
+  
+  /**
+   * Order review
+   *
+   * @param sfWebRequest $request
+   *
+   * @return void
+   */
+  public function executeOrderReview(sfWebRequest $request)
+  {
+    $this->checkCart();
+    $formClass = sfConfig::get('fp_payment_order_class_form', 'fpPaymentOrderReviewForm');
+    $form = new $formClass();
+    if (sfRequest::POST == $request->getMethod()) {
+      $form->bind($request->getParameter($form->getName()));
+      if ($form->isValid()) {
+        $paymentNs = sfConfig::get('fp_payment_main_ns', 'fpPaymentNS');
+        /* @var $attrHolder sfNamespacedParameterHolder */
+        $attrHolder = $this->getContext()->getUser()->getAttributeHolder();
+        $method = 'get' . $attrHolder->get('paymentMethod', null,  $paymentNs);
+        $values = $attrHolder->get('paymentValues', array(), $paymentNs);
+        $ipn = fpPaymentContext::getInstance()
+          ->$method()
+          ->doProcess($values)
+          ->getIpn();
+        
+        $attrHolder->removeNamespace($paymentNs);
+        if ($ipn->hasErrors()) {
+          return $this->redirect('@fpPaymentPlugin_error');
+        } else {
+          return $this->redirect('@fpPaymentPlugin_success');
+        }
+      }
+    }
   }
   
   /**
@@ -175,7 +241,9 @@ class fpPaymentCheckoutActionsBase extends sfActions
    */
   public function executeError(sfWebRequest $request)
   {
-    $method = 'get' . $request->getParameter('type');
+    $method = 'get' . $this->getContext()->getUser()->getAttribute('paymentMethod',
+                                                                   null,
+                                                                   sfConfig::get('fp_payment_main_ns', 'fpPaymentNS'));
     fpPaymentContext::getInstance()->$method()->renderErrorPage($this, $request);
   }
 

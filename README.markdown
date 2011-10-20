@@ -8,11 +8,11 @@ The basic functional of e-commerce: order, product
 
 * [Symfony](http://www.symfony-project.org) 1.4
 * sfDoctrineGuardPlugin - connection does not hardcoded 
-* sfSslRequirementPlugin - recommended plugin for ssl support (optional)
+* fpPaymentCartPlugin - (optional)*1
 * fpPaymentTaxPlugin - (optional)
-* fpPaymentCartPlugin - (optional)
 * fpPaymentAuthorizePlugin - (optional)
 * fpPaymentPayPalPlugin - (optional)
+* sfSslRequirementPlugin - recommended plugin for ssl support (optional)
 
 ## Getting Started
 
@@ -71,3 +71,7 @@ _sfGuardUser.class.php_
     
     fp_payment.after_process_error OR fp_payment.after_process_success
     @var $context fpPaymentContext
+    
+### Notes
+
+*1. Checkout correctly (Order Review) depends on fpPaymentCartPlugin

@@ -62,6 +62,21 @@ class fpPaymentPriceManager
   }
   
   /**
+   * Clear items price
+   *
+   * @return double
+   */
+  public function getSubTotal()
+  {
+    $subTotal = 0.0;
+    /* @var $item fpPaymentPriceManagerItem */
+    foreach ($this->getItems() as $item) {
+      $subTotal += $item->getItemPrice() * $item->getQuntity();
+    }
+    return $subTotal;
+  }
+  
+  /**
    * Get sum
    *
    * @return double
@@ -73,7 +88,7 @@ class fpPaymentPriceManager
     foreach ($this->getItems() as $item) {
       $sum += $item->getPrice();
     }
-    return $this->getRoundedValue($sum + $this->getTaxValue());
+    return $this->getRoundedValue($sum + $this->getTaxValue() + $this->getShippingPrice());
   }
   
   /** 
