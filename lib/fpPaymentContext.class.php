@@ -195,7 +195,8 @@ class fpPaymentContext
   public function getPriceManager()
   {
     if (empty($this->priceManager)) {
-      $this->priceManager = new fpPaymentPriceManager($this->getCustomer());
+      $class = sfConfig::get('fp_payment_price_manager_class', 'fpPaymentPriceManager');
+      $this->priceManager = new $class($this->getCustomer());
     }
     return $this->priceManager;
   }

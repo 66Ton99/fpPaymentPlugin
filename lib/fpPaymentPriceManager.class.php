@@ -15,6 +15,8 @@ class fpPaymentPriceManager
   protected $promotion = null;
   
   protected $customer = null;
+  
+  protected $shipping = null;
 
   /**
    * Constructor
@@ -109,17 +111,26 @@ class fpPaymentPriceManager
   }
   
   /**
+   * Shipping
+   *
+   * @return fpPaymentShippingContext
+   */
+  public function getShipping()
+  {
+    $class = sfConfig::get('fp_payment_shipping_context_class_name', 'fpPaymentShippingContext');
+    if ($class && class_exists($class) && empty($this->shipping)) {
+      $this->shipping = new $class($this->getItems());
+    }
+    return $this->shipping;
+  }
+  
+  /**
    * Get shipping price
    *
    * @return double
    */
   public function getShippingPrice()
   {
-    $class = sfConfig::get('fp_payment_shipping_context_class_name', 'fpPaymentShippingContext');
-    if ($class && class_exists($class)) {
-      $shipping = new $class($this->getItems());
-      return $this->getRoundedValue($shipping->getPrice());
-    }
-    return 0.00;
+    return $this->getRoundedValue($this->getShipping()->getPrice()) ;
   }
 }

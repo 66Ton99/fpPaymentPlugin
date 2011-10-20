@@ -1,8 +1,8 @@
 all:
   payments_context_prefix: 'fpPayment'
-  payment_method_class_form: 'fpPaymentMethodPluginForm'
   cart_item_holder_callback: 'fpPaymentCartContext::getInstance'
   customer_model_name: 'sfGuardUser'
+  price_manager_class: 'fpPaymentPriceManager'
   customer_callback:
     function: 'sfContext::getInstance'
     parameters: []
@@ -10,6 +10,7 @@ all:
   object_classe_name: 'Product' 
   checkout_first_step: '@fpPaymentPlugin_method'
   checkout_billing_step: '@fpPaymentPlugin_billing'
+  payment_method_class_form: 'fpPaymentMethodPluginForm'
   select_profile_class_form: 'fpPaymentSelectProfileForm'
   order_class_form: 'fpPaymentOrderReviewForm'
   main_ns: 'fpPaymentNS'
