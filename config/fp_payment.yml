@@ -1,4 +1,5 @@
 all:
+  context_class_name: 'fpPaymentContext'
   payments_context_prefix: 'fpPayment'
   cart_item_holder_callback: 'fpPaymentCartContext::getInstance'
   customer_model_name: 'sfGuardUser'

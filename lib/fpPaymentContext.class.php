@@ -45,7 +45,8 @@ class fpPaymentContext
   public static function getInstance()
   {
     if (empty(static::$instance)) {
-      static::$instance = new self();
+      $class = sfConfig::get('fp_payment_context_class_name', 'fpPaymentContext');
+      static::$instance = new $class();
     }
     return static::$instance;
   }
