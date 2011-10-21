@@ -2,7 +2,7 @@ fpPaymentOrder:
   actAs:
     Timestampable: ~
   columns:
-    customer_id: {type: integer, notnull: true}
+    customer_id: {type: integer}
     status: {type: enum, values: [<?php echo fpPaymentOrderStatusEnum::implode() ?>] }
     type: {type: varchar(255)}
     currency: {type: varchar(6), notnull: true}
@@ -14,7 +14,7 @@ fpPaymentOrder:
     Customer:
       class: <?php echo sfConfig::get('fp_payment_customer_model_name', 'sfGuardUser') ?> 
       local:    customer_id
-      onDelete: CASCADE
+      onDelete: SET NULL
 
 fpPaymentOrderItem:
   actAs:
