@@ -57,6 +57,10 @@ abstract class PluginfpPaymentOrderItemTable extends Doctrine_Table
       if ($item->getItem()->getTable()->hasTemplate('fpPaymentTaxable')) {
         $model->setTax($item->getItem()->getTaxValue($item->getQuntity()));
       }
+      $behaviour = sfConfig::get('fp_payment_shipping_behaviour_name', 'fpPaymentShippable');
+      if ($item->getItem()->getTable()->hasTemplate($behaviour)) {
+        $model->setShipping($item->getItem()->getShippingValue($item->getQuntity()));
+      }
       $model->save();
     }
   }

@@ -8,7 +8,6 @@ fpPaymentOrder:
     currency: {type: varchar(6), notnull: true}
     billing_address: {type: varchar(255)}
     shipping_address: {type: varchar(255)}
-    shipping: {type: decimal(10), scale: 5, notnull: true, default: 0.0}
     sum:  {type: decimal(10), scale: 2, notnull: true}
   relations:
     Customer:
@@ -26,6 +25,7 @@ fpPaymentOrderItem:
     name: {type: varchar(255)}
     price: {type: decimal(10), scale: 2, notnull: true}
     tax: {type: decimal(10), scale: 5, notnull: true, default: 0.0}
+    shipping: {type: decimal(10), scale: 2, notnull: true, default: 0.0}
   relations:
     Order:
       class: fpPaymentOrder

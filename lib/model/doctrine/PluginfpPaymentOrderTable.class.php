@@ -67,7 +67,6 @@ abstract class PluginfpPaymentOrderTable extends Doctrine_Table
       $order->setCustomerId($customer->getId())
         ->setStatus(fpPaymentOrderStatusEnum::NEWONE)
         ->setCurrency($priceManager->getCurrency())
-        ->setShipping($priceManager->getShippingPrice())
         ->setSum($priceManager->getSum())
         ->save();
     }

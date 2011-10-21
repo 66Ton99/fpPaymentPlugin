@@ -207,12 +207,9 @@ class fpPaymentCheckoutActionsBase extends sfActions
         $request->setParameter('method', $method);
         $getMethod = 'get' . $method;
         $values = $attrHolder->get('paymentValues', array(), $paymentNs);
-        $ipn = fpPaymentContext::getInstance()
-          ->$getMethod()
-          ->doProcess($values)
-          ->renderSuccessPage($this, $request);
-        
+        fpPaymentContext::getInstance()->$getMethod()->doProcess($values);
         $attrHolder->removeNamespace($paymentNs);
+        fpPaymentContext::getInstance()->$getMethod()->renderSuccessPage($this, $request);
       }
     }
   }

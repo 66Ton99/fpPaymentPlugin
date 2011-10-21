@@ -76,4 +76,13 @@ class fpPaymentPriceManagerOrderItem extends fpPaymentPriceManagerBaseItem
   {
     return $this->getItem()->getTax();
   }
+  
+  /**
+   * (non-PHPdoc)
+   * @see fpPaymentPriceManagerBaseItem::getShippingValue()
+   */
+  public function getShippingValue()
+  {
+    return $this->getItem()->getShipping();
+  }
 }

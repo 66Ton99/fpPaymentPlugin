@@ -58,4 +58,11 @@ abstract class fpPaymentPriceManagerBaseItem
    * @return double
    */
   abstract public function getTaxValue();
+  
+  /**
+   * Get product (item) shipping
+   *
+   * @return
+   */
+  abstract public function getShippingValue();
 }

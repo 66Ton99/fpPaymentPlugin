@@ -81,4 +81,18 @@ class fpPaymentPriceManagerItem extends fpPaymentPriceManagerBaseItem
       return 0.00;
     }
   }
+  
+  /**
+   * (non-PHPdoc)
+   * @see fpPaymentPriceManagerBaseItem::getShippingValue()
+   */
+  public function getShippingValue()
+  {
+    $behaviour = sfConfig::get('fp_payment_shipping_behaviour_name', 'fpPaymentShippable');
+    if ($this->getItem()->getTable()->hasTemplate($behaviour)) {
+      return $this->getItem()->getShippingValue($this->getQuntity());
+    } else {
+      return 0.00;
+    }
+  }
 }
