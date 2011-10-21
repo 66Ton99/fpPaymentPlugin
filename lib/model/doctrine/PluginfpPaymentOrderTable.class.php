@@ -43,7 +43,8 @@ abstract class PluginfpPaymentOrderTable extends Doctrine_Table
       'values' => $event['values']
     )));
     
-    $user = $context->getCustomer();
+    $customer = $context->getCustomer();
+    $priceManager = $context->getPriceManager();
     if (($order = $context->getOrderModel()) &&
         is_object($order) &&
         fpPaymentOrderStatusEnum::NEWONE != $order->getStatus())
@@ -53,9 +54,21 @@ abstract class PluginfpPaymentOrderTable extends Doctrine_Table
     if (empty($order)) {
       $class = static::MODEL_NAME;
       $order = new $class();
-      $order->setCustomerId($user->getId())
+      if ($customer instanceof sfDoctrineRecord && 
+          $customer->getTable()->hasTemplate('fpPaymentProfileble'))
+      {
+        if ($profile = $customer->getCurrentBillingProfile()) {
+          $order->setBillingAddress($profile->getAddresString());
+        }
+        if ($profile = $customer->getCurrentShippingProfile()) {
+          $order->setShippingAddress($profile->getAddresString());
+        }
+      }
+      $order->setCustomerId($customer->getId())
         ->setStatus(fpPaymentOrderStatusEnum::NEWONE)
-        ->setCurrency($context->getCart()->getCurrency())
+        ->setCurrency($priceManager->getCurrency())
+        ->setShipping($priceManager->getShippingPrice())
+        ->setSum($priceManager->getSum())
         ->save();
     }
     $context->setOrderModel($order);

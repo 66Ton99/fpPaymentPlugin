@@ -39,6 +39,16 @@ abstract class fpPaymentMethodContext
   abstract public function renderInfoPage(sfAction &$action, sfRequest $request);
   
   /**
+   * Rendering success page
+   *
+   * @param sfAction $action
+   * @param sfWebRequest $request
+   *
+   * @return sfView
+   */
+  abstract public function renderSuccessPage(sfAction &$action, sfRequest $request);
+  
+  /**
    * Rendering error page
    *
    * @param sfAction $action

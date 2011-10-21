@@ -17,6 +17,8 @@ class fpPaymentPriceManager
   protected $customer = null;
   
   protected $shipping = null;
+  
+  protected $currency = null;
 
   /**
    * Constructor
@@ -28,14 +30,39 @@ class fpPaymentPriceManager
     $this->customer = $customer;
   }
   
-  /**
-   * Add one item
+	/**
+   * Get currency
    *
-   * @param fpPaymentPriceManagerItem $item
+   * @return string
+   */
+  public function getCurrency()
+  {
+    return sfConfig::get('fp_payment_currency', 'USD');
+  }
+  
+  /**
+   * Enter description here ...
+   *
+   * @param fpPaymentPriceManagerBaseItem[] $item
    *
    * @return fpPaymentPriceManager
    */
-  public function addItem($item)
+  public function setItems($items)
+  {
+    foreach ($items as $item) {
+      $this->addItem($item);
+    }
+    return $this;
+  }
+  
+  /**
+   * Add one item
+   *
+   * @param fpPaymentPriceManagerBaseItem $item
+   *
+   * @return fpPaymentPriceManager
+   */
+  public function addItem(fpPaymentPriceManagerBaseItem $item)
   {
     $this->items[] = $item;
     return $this;
@@ -71,7 +98,7 @@ class fpPaymentPriceManager
   public function getSubTotal()
   {
     $subTotal = 0.0;
-    /* @var $item fpPaymentPriceManagerItem */
+    /* @var $item fpPaymentPriceManagerBaseItem */
     foreach ($this->getItems() as $item) {
       $subTotal += $item->getItemPrice() * $item->getQuntity();
     }
@@ -86,7 +113,7 @@ class fpPaymentPriceManager
   public function getSum()
   {
     $sum = 0.0;
-    /* @var $item fpPaymentPriceManagerItem */
+    /* @var $item fpPaymentPriceManagerBaseItem */
     foreach ($this->getItems() as $item) {
       $sum += $item->getPrice();
     }
@@ -103,7 +130,7 @@ class fpPaymentPriceManager
   public function getTaxValue()
   {
     $taxes = 0.00;
-    /* @var $item fpPaymentPriceManagerItem */
+    /* @var $item fpPaymentPriceManagerBaseItem */
     foreach ($this->getItems() as $item) {
       $taxes += $item->getTaxValue();
     }

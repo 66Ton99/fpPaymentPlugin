@@ -69,6 +69,10 @@ class fpPaymentContext
   {
     // Initialize cart
     $this->getCart();
+    sfContext::getInstance()
+      ->getEventDispatcher()
+      ->connect('fp_payment_order.after_create',
+                   array(fpPaymentOrderItemTable::getInstance(), 'saveCartItemsToOrderItems'));
   }
   
   /**

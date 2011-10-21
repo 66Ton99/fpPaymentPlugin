@@ -36,14 +36,16 @@ abstract class PluginfpPaymentOrderItemTable extends Doctrine_Table
     /* @var $context fpPaymentContext */
     $context = $event['context'];
     $orderId = $context->getOrderModel()->getId();
-    $items = $context->getCart()->getHolder()->getAll();
+    $items = $context->getPriceManager()->getItems();
     $class = self::MODEL_NAME;
     $colums = array_keys($this->getColumns());
-    /* @var $item fpPaymentCart */
+    /* @var $item fpPaymentPriceManagerItem */
     foreach ($items as $item) {
       /* @var $model fpPaymentOrderItem */
       $model = new $class();
-      $params = array_merge($item->toArray(), $item->getProduct()->toArray());
+      $params = $item->getItem()->toArray();
+      $params['object_id'] = $item->getItem()->getId();
+      $params['quantity'] = $item->getQuntity();
       $params['oreder_id'] = $orderId;
       unset($params['id']);
       foreach ($params as $key => $val) {
@@ -52,11 +54,10 @@ abstract class PluginfpPaymentOrderItemTable extends Doctrine_Table
         }
       }
       $model->setArray($params);
-      if ($item->getProduct()->getTable()->hasTemplate('fpPaymentTaxable')) {
-        $model->setTax($item->getProduct()->getTaxValue($item->getQuantity()));
+      if ($item->getItem()->getTable()->hasTemplate('fpPaymentTaxable')) {
+        $model->setTax($item->getItem()->getTaxValue($item->getQuntity()));
       }
       $model->save();
     }
   }
-  
 }

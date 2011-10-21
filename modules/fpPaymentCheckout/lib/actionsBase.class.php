@@ -203,19 +203,16 @@ class fpPaymentCheckoutActionsBase extends sfActions
         $paymentNs = sfConfig::get('fp_payment_main_ns', 'fpPaymentNS');
         /* @var $attrHolder sfNamespacedParameterHolder */
         $attrHolder = $this->getContext()->getUser()->getAttributeHolder();
-        $method = 'get' . $attrHolder->get('paymentMethod', null,  $paymentNs);
+        $method = $attrHolder->get('paymentMethod', null,  $paymentNs);
+        $request->setParameter('method', $method);
+        $getMethod = 'get' . $method;
         $values = $attrHolder->get('paymentValues', array(), $paymentNs);
         $ipn = fpPaymentContext::getInstance()
-          ->$method()
+          ->$getMethod()
           ->doProcess($values)
-          ->getIpn();
+          ->renderSuccessPage($this, $request);
         
         $attrHolder->removeNamespace($paymentNs);
-        if ($ipn->hasErrors()) {
-          return $this->redirect('@fpPaymentPlugin_error');
-        } else {
-          return $this->redirect('@fpPaymentPlugin_success');
-        }
       }
     }
   }
@@ -241,9 +238,7 @@ class fpPaymentCheckoutActionsBase extends sfActions
    */
   public function executeError(sfWebRequest $request)
   {
-    $method = 'get' . $this->getContext()->getUser()->getAttribute('paymentMethod',
-                                                                   null,
-                                                                   sfConfig::get('fp_payment_main_ns', 'fpPaymentNS'));
+    $method = 'get' . $request->getParameter('method');
     fpPaymentContext::getInstance()->$method()->renderErrorPage($this, $request);
   }
 

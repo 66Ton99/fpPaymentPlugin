@@ -1,6 +1,6 @@
 <?php
 sfContext::getInstance()->getConfiguration()->loadHelpers(array('Number'));
-$currency = fpPaymentCartContext::getInstance()->getCurrency();
+$currency = fpPaymentCartContext::getInstance()->getPriceManager()->getCurrency();
 echo $form->renderFormTag(url_for('@fpPaymentPlugin_orderReview')); ?>
   <table>
     <?php echo $form ?>

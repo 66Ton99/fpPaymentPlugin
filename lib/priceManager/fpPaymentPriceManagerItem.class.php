@@ -7,26 +7,20 @@
  * @subpackage Base
  * @author     Ton Sharp <Forma-PRO@66ton99.org.ua>
  */
-class fpPaymentPriceManagerItem
+class fpPaymentPriceManagerItem extends fpPaymentPriceManagerBaseItem
 {
   
-  protected $priceManager;
-  
-  protected $item;
-  
-  protected $quntity = 1;
-
   /**
    * Constructor
    *
-   * @param fpPaymentPriceManager $priceManager
    * @param Product $item
    * @param int $quntity
    */
-  public function __construct(fpPaymentPriceManager $priceManager, sfDoctrineRecord $item, $quntity = 1)
+  public function __construct($item, $quntity = 1)
   {
-    $this->priceManager = $priceManager;
-    
+    if (!($item instanceof sfDoctrineRecord)) {
+      throw new sfException('The "' . get_class($item) . '" must be model');
+    }
     if (!$item->getTable()->hasTemplate('fpPaymentProduct')) {
       throw new sfException('The "' . get_class($item) . '" model model item must implement fpPaymentProduct behavior');
     }
@@ -37,24 +31,11 @@ class fpPaymentPriceManagerItem
       throw new sfException('The quntity must be more then 0');
     }
     $this->quntity = $quntity;
-    $this->getPriceManager()->addItem($this);
-    return $this;
   }
   
   /**
-   * Get Price Manager
-   *
-   * @return fpPaymentPriceManager
-   */
-  protected function getPriceManager()
-  {
-    return $this->priceManager;
-  }
-  
-  /**
-   * Get item price
-   *
-   * @return double
+   * (non-PHPdoc)
+   * @see fpPaymentPriceManagerBaseItem::getPrice()
    */
   public function getPrice()
   {
@@ -62,9 +43,8 @@ class fpPaymentPriceManagerItem
   }
   
   /**
-   * Get item
-   *
-   * @return Product
+   * (non-PHPdoc)
+   * @see fpPaymentPriceManagerBaseItem::getItem()
    */
   public function getItem()
   {
@@ -72,29 +52,26 @@ class fpPaymentPriceManagerItem
   }
   
 	/**
-   * Get price of item
-   *
-   * @return double
-   */
+	 * (non-PHPdoc)
+	 * @see fpPaymentPriceManagerBaseItem::getItemPrice()
+	 */
   public function getItemPrice()
   {
     return $this->getItem()->getPrice();
   }
   
 	/**
-   * Get items quantity
-   *
-   * @return int
-   */
+	 * (non-PHPdoc)
+	 * @see fpPaymentPriceManagerBaseItem::getQuntity()
+	 */
   public function getQuntity()
   {
     return $this->quntity;
   }
   
   /**
-   * Get product (item) tax
-   *
-   * @return double
+   * (non-PHPdoc)
+   * @see fpPaymentPriceManagerBaseItem::getTaxValue()
    */
   public function getTaxValue()
   {
