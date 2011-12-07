@@ -73,6 +73,7 @@ abstract class PluginfpPaymentCustomerProfile extends BasefpPaymentCustomerProfi
     $query = $this->getTable()
       ->createQuery('cp')
         ->update()
+        ->andWhere('cp.customer_id = ?', $this->getCustomerId())
         ->andWhere('cp.id != ?', $this->getId());
     if ($this->getIsDefaultBilling()) {
       $q = clone $query;
