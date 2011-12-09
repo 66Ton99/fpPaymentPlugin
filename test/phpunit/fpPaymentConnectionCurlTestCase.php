@@ -1,37 +1,27 @@
 <?php
 
 /**
- * fpPaymentCurl test case.
+ * fpPaymentConnectionCurl test case.
  * 
  * @package    fpPayment
  * @subpackage Base
  * @author     Ton Sharp <Forma-PRO@66ton99.org.ua>
  */
-class fpPaymentCurlTestCase extends sfBasePhpunitTestCase
+class fpPaymentConnectionCurlTestCase extends sfBasePhpunitTestCase
 {
   
   /**
-   * @var fpPaymentCurl
+   * @var fpPaymentConnectionCurl
    */
-  private $fpPaymentCurl;
+  private $fpPaymentConnectionCurl;
 
-  /**
-   * Dev hook for custom "setUp" stuff
-   */
   protected function _start()
   {
-    $this->fpPaymentCurl = new fpPaymentCurl();
+    $this->fpPaymentConnectionCurl = new fpPaymentConnectionCurl('');
   }
 
   /**
-   * Dev hook for custom "tearDown" stuff
-   */
-  protected function _end()
-  {
-  }
-
-  /**
-   * Tests fpPaymentCurl->readHeader()
+   * Tests fpPaymentConnection->readHeader()
    */
   public function testReadHeader()
   {
@@ -43,7 +33,7 @@ fewKeysWithTheSameNames: val2
 
 HEADER;
     
-    $this->fpPaymentCurl->readHeader(null, $header);
+    $this->fpPaymentConnectionCurl->readHeader(null, $header);
     $res = array(
       'key' => 'value',
       '0' => 'key witout value',
@@ -53,7 +43,7 @@ HEADER;
       )
     );
     
-    $this->assertEquals($res, $this->fpPaymentCurl->getHeaders());
+    $this->assertEquals($res, $this->fpPaymentConnectionCurl->getHeaders());
   
   }
 

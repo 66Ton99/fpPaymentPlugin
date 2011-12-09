@@ -1,23 +1,16 @@
 <?php
 
 /**
- * Curl
+ * Curl connection protocol
  *
  * @package    fpPayment
  * @subpackage Base
  * @author     Ton Sharp <Forma-PRO@66ton99.org.ua>
  */
-class fpPaymentCurl
+class fpPaymentConnectionCurl extends fpPaymentConnectionBase
 {
 
   private $curlHandler;
-  
-  /**
-   * Error's spool
-   *
-   * @var array
-   */
-  protected $errors = array();
 
   /**
    * Curl output buffer
@@ -48,13 +41,10 @@ class fpPaymentCurl
   protected $curlMultiHandler;
 
   /**
-   * Constructor
-   *
-   * @param string $url
-   *
-   * @return void
+   * (non-PHPdoc)
+   * @see fpPaymentConnectionBase::__construct()
    */
-  public function __construct($url = '')
+  public function __construct($url)
   {
     $this->options['CURLOPT_USERAGENT'] = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.8.0.6) Gecko/20060728 Firefox/1.5.0.6';
     $this->options['CURLOPT_URL'] = $url;
@@ -68,19 +58,13 @@ class fpPaymentCurl
   }
 
   /**
-   * Send POST request
-   * 
-   * @param array $data
-   * @param string $url
-   * @return string
+   * (non-PHPdoc)
+   * @see fpPaymentConnectionBase::sendPostRequest()
    */
-  public function sendPostRequest($data = array(), $url = '')
+  public function sendPostRequest($data = array())
   {
     $this->curlHandler = curl_init();
     
-    if (!empty($url)) {
-      $this->options['CURLOPT_URL'] = $url;
-    }
     $this->options['CURLOPT_POST'] = 1;
     $this->options['CURLOPT_POSTFIELDS'] = $this->prepareRequest($data);
     $this->process();
@@ -88,6 +72,22 @@ class fpPaymentCurl
     unset($this->options['CURLOPT_POST']);
     unset($this->options['CURLOPT_POSTFIELDS']);
     
+    return $this->response;
+  }
+  
+	/**
+   * (non-PHPdoc)
+   * @see fpPaymentConnectionBase::sendGetRequest()
+   */
+  public function sendGetRequest($data = array())
+  {
+    $this->curlHandler = curl_init();
+    $url_query = $this->prepareRequest($data);
+    if (!empty($url_query)) {
+      $this->options['CURLOPT_URL'] .= '?' . $url_query;
+    }
+    
+    $this->process();
     return $this->response;
   }
 
@@ -125,33 +125,15 @@ class fpPaymentCurl
   }
 
   /**
-   * Send GET request
+   * Process request
    *
-   * @param array $data
-   * @param string $url
-   *
-   * @return string
+   * @return bool
    */
-  public function sendGetRequest($data = array(), $url = '')
-  {
-    $this->curlHandler = curl_init();
-    if (!empty($url)) {
-      $this->options['CURLOPT_URL'] = $url;
-    }
-    $url_query = $this->prepareRequest($data);
-    if (!empty($url_query)) {
-      $this->options['CURLOPT_URL'] .= '?' . $url_query;
-    }
-    
-    $this->process();
-    return $this->response;
-  }
-
   protected function process()
   {
     
     if (!is_resource($this->curlHandler)) {
-      $this->setTextError('Curl has not be initialized');
+      $this->addTextError('Curl has not be initialized');
       return false;
     }
     
@@ -173,43 +155,25 @@ class fpPaymentCurl
     if ($this->hasHeader('Location')) {
       $this->isRedirect = true;
     } elseif (empty($response)) {
-      $this->setTextError('Null size reply ' . curl_error($this->curlHandler));
+      $this->addTextError('Null size reply ' . curl_error($this->curlHandler));
       curl_close($this->curlHandler);
       return false;
     }
     
     if (curl_errno($this->curlHandler) == 0) {
       curl_close($this->curlHandler);
-      return $this->response = $response;
-    } else {
-      $this->setTextError('Error, while process request: ' . curl_error($this->curlHandler));
-      curl_close($this->curlHandler);
-      return false;
+      $this->response = $response;
+      return true;
     }
-  }
-
-  public function setTextError($err)
-  {
-    $this->errors[] = $err;
-  }
-
-  public function hasErrors()
-  {
-    return !empty($this->errors)?true:false;
-  }
-  
-  /**
-   * Get errors
-   *
-   * @return array
-   */
-  public function getErrors()
-  {
-    return $this->errors;
+    $this->addTextError('Error, while process request: ' . curl_error($this->curlHandler));
+    curl_close($this->curlHandler);
+    return false;
   }
 
   /**
    * Convert array data to string
+   *
+   * @deprecated
    *
    * @param array $data
    *
@@ -246,10 +210,17 @@ class fpPaymentCurl
     return $this->response;
   }
 
+  /**
+   * 
+   *
+   * @param string $urls
+   *
+   * @return array
+   */
   public function setMultiRequest($urls)
   {
     if (empty($urls)) {
-      $this->setTextError('Curl: Multi init error');
+      $this->addTextError('Curl: Multi init error');
       return;
     }
     
@@ -309,7 +280,7 @@ class fpPaymentCurl
       if (($err = curl_error($this->connections[$url])) == '') {
         $res[$url] = curl_multi_getcontent($this->connections[$url]);
       } else {
-        $this->setTextError("Curl error on handle $url: $err\n");
+        $this->addTextError("Curl error on handle {$url}: {$err}\n");
       }
       curl_multi_remove_handle($this->curlMultiHandler, $this->connections[$url]);
       curl_close($this->connections[$url]);
@@ -320,9 +291,18 @@ class fpPaymentCurl
     return $res;
   }
 
+  /**
+   * Set option
+   *
+   * @param string $option_name
+   * @param string $value
+   *
+   * @return fpPaymentConnectionCurl
+   */
   public function setOption($option_name, $value)
   {
     $this->customOptions[$option_name] = $value;
+    return $this;
   }
   
   /**
@@ -371,6 +351,5 @@ class fpPaymentCurl
   {
     return $this->isRedirect;
   }
-  
 }
 
