@@ -35,7 +35,7 @@ abstract class fpPaymentIpnBase
    *
    * @return void
    */
-  public function __construct() {}
+  abstract public function __construct($options);
   
   /**
    * Process

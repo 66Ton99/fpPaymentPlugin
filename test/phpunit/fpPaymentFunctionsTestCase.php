@@ -85,4 +85,24 @@ class fpPaymentFunctionsTestCase extends sfBasePhpunitTestCase
                         'subFunctions' => array('someMethod')));
     $this->assertEquals($time, fpPaymentFunctions::getObjFromConfig('fp_payment_customer_callback'));
   }
+  
+  /**
+   * @test
+   */
+  public function addConfigsToSystem()
+  {
+    $arr = array(
+      'oneLev' => 'val1',
+      'fewLevs' => array(
+        'lev2' => 'val2',
+        'lev21' => 'val3',
+        'subLev' => array(
+          'lev3' => 'val4',
+          'lev31' => 'val5',
+        )
+      )
+    );
+    fpPaymentFunctions::addConfigsToSystem('test_one', $arr);
+//    $this->addConfigsToSystem()
+  }
 }

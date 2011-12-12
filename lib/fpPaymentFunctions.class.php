@@ -42,4 +42,24 @@ class fpPaymentFunctions
       return call_user_func($callback);
     }
   }
+  
+  /**
+   * Add 
+   *
+   * @param unknown_type $configs
+   *
+   * @return void
+   */
+  public static function addConfigsToSystem($sectionName, $configs)
+  {
+    foreach ($configs as $name => $value) {
+      if (is_array($value)) {
+        foreach ($value as $subName => $subValue) {
+          sfConfig::set($sectionName . '_' . $subName, $subValue);
+        }
+      } else {
+        sfConfig::set($sectionName, $value);
+      }  
+    }
+  }
 }

@@ -3,7 +3,8 @@ all:
   payments_context_prefix: 'fpPayment'
   cart_item_holder_callback: 'fpPaymentCartContext::getInstance'
   customer_model_name: 'sfGuardUser'
-  price_manager_class: 'fpPaymentPriceManager'
+  price_manager_class_name: 'fpPaymentPriceManager'
+  functions_class_name: 'fpPaymentFunctions'
   currency: 'USD'
   customer_callback:
     function: 'sfContext::getInstance'

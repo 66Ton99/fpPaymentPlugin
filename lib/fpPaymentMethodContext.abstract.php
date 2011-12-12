@@ -63,11 +63,15 @@ abstract class fpPaymentMethodContext
    *
    * @return fpPaymentIpnBase
    */
-  public function getIpn()
+  public function getIpn($options = array())
   {
     if (!isset($this->ipn)) {
-      $ipnClass = 'fpPayment' . static::NAME . 'Ipn';
-      $this->ipn = new $ipnClass();
+      $baseConfKey = 'fp_payment_' . strtolower(static::NAME);
+      $ipnsConfig = sfConfig::get($baseConfKey . '_ipns');
+      $defIpn = sfConfig::get($baseConfKey . '_ipn_default');
+      $ipnClassName = 'fpPayment' . static::NAME . 'Ipn';
+      $ipnObjClassName = $ipnClassName . ucfirst($defIpn);
+      $this->ipn = new $ipnClassName(new $ipnObjClassName($ipnsConfig[$defIpn]));
     }
     return $this->ipn;
   }
