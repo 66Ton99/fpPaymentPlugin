@@ -29,13 +29,34 @@ abstract class fpPaymentIpnBase
    * @var array
    */
   protected $data = array();
+  
+  /**
+   * URL keys
+   * 
+   * @var array
+   */
+  protected $urlsKeys = array();
+  
+  /**
+   * Protocol obj
+   * 
+   * @var fpPaymentProtocolBase
+   */
+  protected $protocol;
+  
+  /**
+   * Connectio
+   * 
+   * @var fpPaymentConnection
+   */
+  protected $connection;
 
   /**
    * Constructor
    *
    * @return void
    */
-  abstract public function __construct($options);
+  abstract public function __construct($options = array());
   
   /**
    * Process
@@ -43,6 +64,23 @@ abstract class fpPaymentIpnBase
    * @return fpPaymentIpnBase
    */
   abstract public function process();
+  
+  /**
+   * Loger
+   *
+   * @return fpPaymentLoger
+   */
+  abstract public function getLoger();
+  
+  /**
+   * Get main context
+   *
+   * @return fpPaymentContext
+   */
+  protected function getContext()
+  {
+    return fpPaymentContext::getInstance();
+  }
   
   /**
    * Set data
@@ -114,4 +152,77 @@ abstract class fpPaymentIpnBase
     return $this->response;
   }
   
+	/**
+   * Retrun keys of urls
+   *
+   * @return array
+   */
+  public function getUrlKeys()
+  {
+    return $this->urlsKeys;
+  }
+  
+  /**
+   * Convert routes to urls
+   *
+   * @param array $data
+   *
+   * @return array
+   */
+  protected function convertRoutesToUrls($data)
+  {
+    sfContext::getInstance()->getConfiguration()->loadHelpers(array('Url'));
+    foreach ($this->getUrlKeys() as $key) {
+      $url = $data[$key];
+      if (false === strpos($url, '://')) {
+        $url = url_for($url, true);
+      }
+      $data[$key] = $url;
+    }
+    return $data;
+  }
+  
+  /**
+   * Get communication protocol
+   *
+   * @param string $type
+   * 
+   * @todo Finished
+   *
+   * @return fpPaymentProtocol
+   */
+  protected function getProtocol()
+  {
+    $type = 'NVP';
+    if (empty($this->protocol)) {
+      $className = 'fpPaymentProtocol' . ucfirst(strtolower($type));
+      $this->protocol = new $className();
+    }
+    return $this->protocol;
+  }
+  
+  /**
+   * Get connection
+   *
+   * @param string $url
+   *
+   * @return fpPaymentConnection
+   */
+  protected function getConnection($url)
+  {
+    if (empty($this->connection)) {
+      $this->connection = new fpPaymentConnection($url);
+    }
+    return $this->connection;
+  }
+  
+	/**
+   * Get url
+   *
+   * @return string
+   */
+  public function getUrl()
+  {
+    return '';
+  }
 }

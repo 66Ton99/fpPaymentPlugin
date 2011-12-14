@@ -170,9 +170,9 @@ class fpPaymentContext
   public function getCart()
   {
     if (empty($this->cart)) {
-      $functionsClassName = sfConfig::get('functions_class_name');
+      $functionsClassName = sfConfig::get('fp_payment_functions_class_name', 'fpPaymentFunctions');
       $this->cart = $functionsClassName::getObjFromConfig('fp_payment_cart_item_holder_callback',
-                                                         'fpPaymentCartContext::getInstance');
+                                                          'fpPaymentCartContext::getInstance');
     }
     return $this->cart;
   }
@@ -185,7 +185,7 @@ class fpPaymentContext
   public function getCustomer()
   {
     if (empty($this->customer)) {
-      $functionsClassName = sfConfig::get('functions_class_name');
+      $functionsClassName = sfConfig::get('fp_payment_functions_class_name', 'fpPaymentFunctions');
       $this->customer = $functionsClassName::getObjFromConfig('fp_payment_customer_callback',
                                                              array('function' => 'sfContext::getInstance',
                                                                    'parameters' => array(),

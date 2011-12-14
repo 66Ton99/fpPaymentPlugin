@@ -67,11 +67,14 @@ abstract class fpPaymentMethodContext
   {
     if (!isset($this->ipn)) {
       $baseConfKey = 'fp_payment_' . strtolower(static::NAME);
-      $ipnsConfig = sfConfig::get($baseConfKey . '_ipns');
       $defIpn = sfConfig::get($baseConfKey . '_ipn_default');
       $ipnClassName = 'fpPayment' . static::NAME . 'Ipn';
-      $ipnObjClassName = $ipnClassName . ucfirst($defIpn);
-      $this->ipn = new $ipnClassName(new $ipnObjClassName($ipnsConfig[$defIpn]));
+      if (empty($defIpn)) {
+        $this->ipn = new $ipnClassName($options);
+      } else {
+        $ipnObjClassName = $ipnClassName . ucfirst($defIpn);
+        $this->ipn = new $ipnClassName(new $ipnObjClassName($options));
+      }
     }
     return $this->ipn;
   }
@@ -108,6 +111,7 @@ abstract class fpPaymentMethodContext
    */
   public function doProcess($values)
   {
+    $this->getIpn(); // Init IPN
     $values = new ArrayObject($values);
     $this->getContext()->getDispatcher()->notify(new sfEvent($this, 'fp_payment.befor_process', array(
       'context' => $this->getContext(),

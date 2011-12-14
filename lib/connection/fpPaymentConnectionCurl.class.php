@@ -13,6 +13,13 @@ class fpPaymentConnectionCurl extends fpPaymentConnectionBase
   private $curlHandler;
 
   /**
+   * Response headers
+   *
+   * @var array
+   */
+  protected $responceHeaders = array();
+  
+  /**
    * Curl output buffer
    *
    * @var string
@@ -24,19 +31,10 @@ class fpPaymentConnectionCurl extends fpPaymentConnectionBase
   protected $customOptions = array();
   
   protected $isRedirect = false;
-
-  /**
-   * Response headers
-   *
-   * @var array
-   */
-  protected $headers = array();
-
+  
   protected $connections = array();
 
   protected $request = '';
-  
-  protected $requestInfo = array();
 
   protected $curlMultiHandler;
 
@@ -61,12 +59,12 @@ class fpPaymentConnectionCurl extends fpPaymentConnectionBase
    * (non-PHPdoc)
    * @see fpPaymentConnectionBase::sendPostRequest()
    */
-  public function sendPostRequest($data = array())
+  public function sendPostRequest($data)
   {
     $this->curlHandler = curl_init();
     
     $this->options['CURLOPT_POST'] = 1;
-    $this->options['CURLOPT_POSTFIELDS'] = $this->prepareRequest($data);
+    $this->options['CURLOPT_POSTFIELDS'] = $data;
     $this->process();
     
     unset($this->options['CURLOPT_POST']);
@@ -79,15 +77,15 @@ class fpPaymentConnectionCurl extends fpPaymentConnectionBase
    * (non-PHPdoc)
    * @see fpPaymentConnectionBase::sendGetRequest()
    */
-  public function sendGetRequest($data = array())
+  public function sendGetRequest($data)
   {
     $this->curlHandler = curl_init();
-    $url_query = $this->prepareRequest($data);
-    if (!empty($url_query)) {
-      $this->options['CURLOPT_URL'] .= '?' . $url_query;
+    $orUrl = $this->options['CURLOPT_URL'];
+    if (!empty($data)) {
+      $this->options['CURLOPT_URL'] .= '?' . $data;
     }
-    
     $this->process();
+    $this->options['CURLOPT_URL'] = $orUrl;
     return $this->response;
   }
 
@@ -108,16 +106,16 @@ class fpPaymentConnectionCurl extends fpPaymentConnectionBase
           $key = strtolower(trim(array_shift($parts)));
           $value = trim(implode(':', $parts));
           if (empty($value)) continue;
-          if (isset($this->headers[$key]) && !is_array($this->headers[$key])) {
-            $this->headers[$key] = array($this->headers[$key]);
+          if (isset($this->responceHeaders[$key]) && !is_array($this->responceHeaders[$key])) {
+            $this->responceHeaders[$key] = array($this->responceHeaders[$key]);
           }
-          if (isset($this->headers[$key]) && is_array($this->headers[$key])) {
-            $this->headers[$key][] = $value;
+          if (isset($this->responceHeaders[$key]) && is_array($this->responceHeaders[$key])) {
+            $this->responceHeaders[$key][] = $value;
           } else {
-            $this->headers[$key] = $value;
+            $this->responceHeaders[$key] = $value;
           }
         } elseif ('' != ($value = trim($headerLine))) {
-          $this->headers[] = $value;
+          $this->responceHeaders[] = $value;
         }
       }
     }
@@ -143,13 +141,21 @@ class fpPaymentConnectionCurl extends fpPaymentConnectionBase
       curl_setopt($this->curlHandler, constant($key), $values);
     }
     
+    if (!empty($this->header)) {
+      $header =  array();
+      foreach ($this->header as $key => $val) {
+        $header[] = $key . ': ' . urlencode($val);
+      }
+      curl_setopt($this->curlHandler, CURLOPT_HTTPHEADER, $header);
+    }
+    
     // process request
     $response = curl_exec($this->curlHandler);
     $this->customOptions = array();
-    $this->requestInfo = curl_getinfo($this->curlHandler);
+    $this->responceInfo = curl_getinfo($this->curlHandler);
     
-    if ($this->requestInfo['http_code'] != 200) {
-      $response = '';
+    if ($this->responceInfo['http_code'] != 200) {
+      $this->addTextError('HTTP code not 200 but ' . $this->responceInfo['http_code']);
     }
     
     if ($this->hasHeader('Location')) {
@@ -168,26 +174,6 @@ class fpPaymentConnectionCurl extends fpPaymentConnectionBase
     $this->addTextError('Error, while process request: ' . curl_error($this->curlHandler));
     curl_close($this->curlHandler);
     return false;
-  }
-
-  /**
-   * Convert array data to string
-   *
-   * @deprecated
-   *
-   * @param array $data
-   *
-   * @return string
-   */
-  public function prepareRequest($data)
-  {
-    if (empty($data) || !is_array($data)) return '';
-    $parts = array();
-    foreach ($data as $field => $value) {
-      $parts[] = $field . '=' . $value;
-    }
-    
-    return $this->request = implode('&', $parts);
   }
   
   /**
@@ -312,7 +298,7 @@ class fpPaymentConnectionCurl extends fpPaymentConnectionBase
    */
   public function getHeaders()
   {
-    return $this->headers;
+    return $this->responceHeaders;
   }
   
   /**
@@ -325,7 +311,7 @@ class fpPaymentConnectionCurl extends fpPaymentConnectionBase
   public function hasHeader($key)
   {
     $key = strtolower($key);
-    return isset($this->headers[$key]);
+    return isset($this->responceHeaders[$key]);
   }
   
   /**
@@ -337,7 +323,7 @@ class fpPaymentConnectionCurl extends fpPaymentConnectionBase
   {
     $key = strtolower($key);
     if ($this->hasHeader($key)) {
-      return $this->headers[$key];
+      return $this->responceHeaders[$key];
     }
     return false;
   }

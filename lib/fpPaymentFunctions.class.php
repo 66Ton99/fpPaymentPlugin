@@ -44,22 +44,59 @@ class fpPaymentFunctions
   }
   
   /**
-   * Add 
+   * Register congig to system. After 3-th level must be array
    *
-   * @param unknown_type $configs
+   * @param strig $sectionName
+   * @param array $configs
+   * @param int $levels
    *
    * @return void
    */
-  public static function addConfigsToSystem($sectionName, $configs)
+  public static function registerConfigsToSystem($sectionName, $configs, $levels = 1)
   {
+    $levels--;
     foreach ($configs as $name => $value) {
-      if (is_array($value)) {
-        foreach ($value as $subName => $subValue) {
-          sfConfig::set($sectionName . '_' . $subName, $subValue);
-        }
+      if ($levels && is_array($value)) {
+        static::registerConfigsToSystem($sectionName . '_' . $name, $value, $levels);
       } else {
-        sfConfig::set($sectionName, $value);
+        sfConfig::set($sectionName . '_' . $name, $value);
       }  
     }
+  }
+  
+  /**
+   * Recursive merge 2 or more arrays 
+   *
+   * @return array
+   */
+  public static function arrayMergeRecursive()
+  {
+
+    if (func_num_args() < 2) {
+      trigger_error(__FUNCTION__ . ' needs two or more array arguments', E_USER_WARNING);
+      return;
+    }
+    $arrays = func_get_args();
+    $merged = array();
+    while ($arrays) {
+      $array = array_shift($arrays);
+      if (!is_array($array)) {
+        trigger_error(__FUNCTION__ . ' encountered a non array argument', E_USER_WARNING);
+        return;
+      }
+      if (!$array) continue;
+      foreach ($array as $key => $value) {
+        if (is_string($key)) {
+          if (is_array($value) && array_key_exists($key, $merged) && is_array($merged[$key])) {
+            $merged[$key] = static::arrayMergeRecursive($merged[$key], $value);
+          } else {
+            $merged[$key] = $value;
+          }
+        } else {
+          $merged[] = $value;
+        }
+      }
+    }
+    return $merged;
   }
 }

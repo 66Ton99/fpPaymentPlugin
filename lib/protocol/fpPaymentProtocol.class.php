@@ -9,7 +9,8 @@
  * 
  * @property $object fpPaymentProtocolBase
  * 
- * @method ? ?
+ * @method string fromArray($arr)
+ * @method array toArray($responseString)
  */
 class fpPaymentProtocol extends fpPaymentDecoratorBase
 {

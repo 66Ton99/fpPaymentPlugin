@@ -9,7 +9,13 @@
  * 
  * @property $object fpPaymentConnectionBase
  * 
- * @method ? ?
+ * @method string sendPostRequest()
+ * @method string sendGetRequest()
+ * @method fpPaymentConnectionBase addTextError()
+ * @method fpPaymentConnectionBase setHeader()
+ * @method bool hasErrors()
+ * @method array getErrors()
+ * @method mixed getResponse()
  */
 class fpPaymentConnection extends fpPaymentDecoratorBase
 {

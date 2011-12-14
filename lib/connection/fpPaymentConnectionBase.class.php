@@ -17,6 +17,10 @@ abstract class fpPaymentConnectionBase
    */
   protected $errors = array();
   
+  protected $header = array();
+  
+  protected $responceInfo = array();
+  
   /**
    * Constructor
    *
@@ -29,21 +33,20 @@ abstract class fpPaymentConnectionBase
   /**
    * Send POST request
    * 
-   * @param array $data
-   * @param string $url
+   * @param string $data
+   * 
    * @return string
    */
-  abstract public function sendPostRequest($data = array());
+  abstract public function sendPostRequest($data);
   
   /**
    * Send GET request
    *
-   * @param array $data
-   * @param string $url
+   * @param string $data
    *
    * @return string
    */
-  abstract public function sendGetRequest($data = array());
+  abstract public function sendGetRequest($data);
   
   /**
    * Add text error
@@ -76,6 +79,42 @@ abstract class fpPaymentConnectionBase
   public function getErrors()
   {
     return $this->errors;
+  }
+  
+  /**
+   * Set request header
+   *
+   * @param array $header
+   *
+   * @return fpPaymentConnectionBase
+   */
+  public function setHeader(array $header)
+  {
+    $this->header = $header;
+    return $this;
+  }
+  
+	/**
+   * Get responce info
+   *
+   * @return array - posible keys: url, http_code, redirect_count ...
+   */
+  public function getResponseInfos()
+  {
+    return $this->responceInfo;
+  }
+  
+	/**
+	 * Get info item
+	 *
+	 * @param string $key
+	 *
+	 * @return string
+	 */
+  public function getResponseInfo($key)
+  {
+    if (!isset($this->responceInfo[$key])) return null;
+    return $this->responceInfo[$key];
   }
 }
 
