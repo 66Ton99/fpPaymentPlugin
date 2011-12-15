@@ -157,6 +157,7 @@ class fpPaymentCheckoutActionsBase extends sfActions
       $this->getContext()->getUser()->setAttribute('paymentMethod',
                                                    $paymentMethod,
                                                    sfConfig::get('fp_payment_main_ns', 'fpPaymentNS'));
+      $this->redirect('@fpPaymentPlugin_info');
     }
     $formClass = sfConfig::get('fp_payment_payment_method_class_form', 'fpPaymentMethodPluginForm');
     $form = new $formClass();

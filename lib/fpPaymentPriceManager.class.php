@@ -158,6 +158,9 @@ class fpPaymentPriceManager
    */
   public function getShippingPrice()
   {
-    return $this->getRoundedValue($this->getShipping()->getPrice()) ;
+    if ($obj = $this->getShipping()) {
+      return $this->getRoundedValue($obj->getPrice()) ;
+    }
+    return 0.00;
   }
 }
