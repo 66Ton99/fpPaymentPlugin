@@ -116,5 +116,17 @@ abstract class fpPaymentConnectionBase
     if (!isset($this->responceInfo[$key])) return null;
     return $this->responceInfo[$key];
   }
+  
+  /**
+   * Convert $data to string
+   *
+   * @param mixed $data
+   *
+   * @return string
+   */
+  public function toString($data)
+  {
+    return print_r($data, true);
+  }
 }
 

@@ -9,4 +9,14 @@
  */
 abstract class PluginfpPaymentOrder extends BasefpPaymentOrder
 {
+  
+  /**
+   * Return title of status
+   *
+   * @return string
+   */
+  public function getStatusTitle()
+  {
+    return fpPaymentOrderStatusEnum::title($this->getStatus());
+  }
 }

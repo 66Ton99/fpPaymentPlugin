@@ -1,0 +1,1 @@
+<h1>Order №<?php echo $order->getId()?> <span><?php echo $order->getStatusTitle() ?></span></h1>

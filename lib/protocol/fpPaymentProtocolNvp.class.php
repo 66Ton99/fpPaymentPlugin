@@ -22,7 +22,19 @@ class fpPaymentProtocolNvp extends fpPaymentProtocolBase
     if (empty($arr) || !is_array($arr)) return '';
     $parts = array();
     foreach ($arr as $field => $value) {
-      $parts[] = $field . '=' . urlencode($value);
+      if (is_array($value)) {
+        foreach ($value as $subKey => $subValue) {
+          if (is_array($subValue)) {
+            foreach ($subValue as $subsKey => $subsValue) {
+              $parts[] = urlencode($field . '[' . $subKey . '].' .$subsKey) . '=' . urlencode($subsValue);
+            }
+          } else {
+            $parts[] = urlencode($field . '[' . $subKey . ']') . '=' . urlencode($subValue);
+          }
+        }
+      } else {
+        $parts[] = $field . '=' . urlencode($value);
+      }
     }
     
     return implode('&', $parts);
@@ -35,11 +47,11 @@ class fpPaymentProtocolNvp extends fpPaymentProtocolBase
    */
   public function toArray($responseString)
   {
-    $return = $output = array();
-    parse_str($responseString, $output);
-    foreach ($output as $key => $val) {
-      $return[urldecode($key)] = urldecode($val);
+    $retrun = array();
+    foreach (explode('&', $responseString) as $line) {
+      list($key, $value) = array_map('urldecode', explode('=', $line));
+      $retrun[$key] = $value;
     }
-    return $return;
+    return $retrun;
   }
 }

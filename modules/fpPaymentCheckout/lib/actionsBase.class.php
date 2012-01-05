@@ -239,5 +239,4 @@ class fpPaymentCheckoutActionsBase extends sfActions
     $method = 'get' . $request->getParameter('method');
     fpPaymentContext::getInstance()->$method()->renderErrorPage($this, $request);
   }
-
 }

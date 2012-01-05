@@ -198,8 +198,10 @@ class fpPaymentConnectionCurl extends fpPaymentConnectionBase
 
   /**
    * 
-   *
+   * 
    * @param string $urls
+   * 
+   * @todo finish
    *
    * @return array
    */

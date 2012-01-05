@@ -33,6 +33,7 @@ fpPaymentPlugin_shippingMethod:
 fpPaymentPlugin_orderReview:
   url:   /checkout/orderReview
   param: { module: fpPaymentCheckout, action: orderReview }
+
   
 fpPaymentPlugin_error:
   url:   /checkout/error
@@ -42,5 +43,8 @@ fpPaymentPlugin_success:
   url:   /checkout/success
   param: { module: fpPaymentCheckout, action: success }
   
+fpPaymentPlugin_orderStatus:
+  url:   /order/status/:id
+  param: { module: fpPayment, action: orderStatus }
 
   
