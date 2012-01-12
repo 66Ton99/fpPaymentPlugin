@@ -54,7 +54,7 @@ _sfGuardUser.class.php_
     @var $context fpPaymentContext
     @var $values array
     
-    fp_payment_order.befor_create
+    fp_payment_order.befor_createfpPaymentCartContext::getInstance
     @var $context fpPaymentContext
     @var $values array
     
@@ -74,4 +74,5 @@ _sfGuardUser.class.php_
     
 ### Notes
 
-*1. Checkout correctly (Order Review) depends on fpPaymentCartPlugin
+*1. Checkout correctly (Order Review) depends on fpPaymentCartPlugin and if you don't want to use fpPaymentCartPlugin
+but it display Worning put "cart_item_holder_callback: 'fpPaymentTestNullObject'" in to fp_payment.yml

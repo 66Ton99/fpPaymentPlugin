@@ -18,13 +18,6 @@ class fpPaymentConnectionCurl extends fpPaymentConnectionBase
    * @var array
    */
   protected $responceHeaders = array();
-  
-  /**
-   * Curl output buffer
-   *
-   * @var string
-   */
-  protected $response = '';
 
   protected $options = array();
 

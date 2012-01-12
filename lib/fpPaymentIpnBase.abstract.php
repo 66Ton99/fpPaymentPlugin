@@ -218,10 +218,12 @@ abstract class fpPaymentIpnBase
   
 	/**
    * Get url
+   * 
+   * @param string $path;
    *
    * @return string
    */
-  public function getUrl()
+  public function getUrl($path = null)
   {
     return '';
   }

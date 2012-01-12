@@ -30,7 +30,7 @@ class fpPaymentConnection extends fpPaymentDecoratorBase
     if (extension_loaded('curl')) {
       $this->object = new fpPaymentConnectionCurl($url);
     } else {
-      throw new sfException('cURL extension does not loaded. Need to implement socket connection');
+      $this->object = new fpPaymentConnectionStream($url);
     }
   }
   
