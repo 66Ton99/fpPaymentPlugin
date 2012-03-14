@@ -11,7 +11,7 @@ fpPaymentOrder:
     sum:  {type: decimal(10), scale: 2, notnull: true}
   relations:
     Customer:
-      class: <?php echo sfConfig::get('fp_payment_customer_model_name', 'sfGuardUser') ?> 
+      class: <?php echo sfConfig::get('fp_payment_customer_model_name', 'sfGuardUser') . "\n" ?>
       local:    customer_id
       onDelete: SET NULL
 
@@ -32,10 +32,10 @@ fpPaymentOrderItem:
       local: oreder_id
       onDelete: CASCADE
     Product:
-      class: <?php echo sfConfig::get('fp_payment_object_classe_name', 'Product') ?> 
+      class: <?php echo sfConfig::get('fp_payment_object_classe_name', 'Product') . "\n" ?>
       local: object_id
       onDelete: CASCADE
-      
+
 fpPaymentCustomerProfile:
   actAs:
     Timestampable: ~
@@ -54,7 +54,7 @@ fpPaymentCustomerProfile:
     is_default_shipping: {type: boolean, notnull: true, default: 1}
   relations:
     Customer:
-      class: <?php echo sfConfig::get('fp_payment_customer_model_name', 'sfGuardUser') ?> 
+      class: <?php echo sfConfig::get('fp_payment_customer_model_name', 'sfGuardUser') . "\n" ?>
       local: customer_id
       onDelete: CASCADE
       onUpdate: NO ACTION
