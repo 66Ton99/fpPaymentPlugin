@@ -2,27 +2,27 @@
 
 /**
  * Base decorator
- * 
+ *
  * @package    fpPayment
  * @subpackage Base
  * @author     Ton Sharp <Forma-PRO@66ton99.org.ua>
  */
 abstract class fpPaymentDecoratorBase
 {
-  
+
   /**
    * Decorated object
    *
    * @var object
    */
   protected $object = null;
-  
+
   /**
    * Magic method
    *
    * @param string $method
    * @param array $params
-   * 
+   *
    * @throws sfException
    *
    * @return mixed
@@ -33,6 +33,10 @@ abstract class fpPaymentDecoratorBase
       throw new sfException("Called '{$method}' method does not exist in " . get_class($this));
     }
     $return = call_user_func_array(array($this->object, $method), $params);
+    $objectClassName = get_class($this->object);
+    if ($return instanceof $objectClassName) {
+      return $this;
+    }
     return $return;
   }
 }
